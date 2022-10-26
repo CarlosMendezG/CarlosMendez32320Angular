@@ -1,0 +1,59 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+::ng-deep .mat-menu-content{
+  background-color: rgb(243, 243, 243);
+}
+
+.mat-menu-item {
+  color: navy !important;
+  line-height: 35px;
+  height: 35px;
+}
+
+button.mat-menu-item{
+    background-color: rgb(243, 243, 243);
+}
+
+button.mat-menu-item:hover {
+    background-color: navy;
+    color: white !important;
+}
+
+.buttonIcon {
+  color: navy !important;
+}
+
+.menuItemIcon {
+  color: navy !important;
+}
+
+.menuItemIconRed {
+  color: red !important;
+}
+
+.mat-menu-item .mat-icon{
+  color: navy !important;
+}
+
+.mat-menu-item:hover .mat-icon{
+  color: white !important;
+}
+
+.mat-toolbar {
+  color: navy;
+  background: #F2F2F2;
+  height: 50px;
+}
+
+.menuBotones {
+  color: navy;
+  background-color: #FAFAFA;
+  text-align: center;   
+}
+
+// .mat-icon {
+//   color: navy !important;
+// }
+

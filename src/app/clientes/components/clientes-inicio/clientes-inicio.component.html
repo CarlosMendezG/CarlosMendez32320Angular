@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-3">
+        <app-clientes-menu [menuSeleccionado]="menuSeleccionadoCliente" (menuClientesSeleccionado)="cambioMenuClienteSeleccionado($event)"
+            (mostrarDatosClientes)="cambioMostrarDatosCliente($event)"></app-clientes-menu>    
+        <div class="p-1" *ngIf="mostrarDatosCliente">        
+            <b class="px-2">Cliente sincrónica</b>
+            <small>{{clientes | json }}</small>
+            <hr>
+            <b class="px-2">Cliente observable</b>
+            <small >{{clientes$ | async | json}}</small>
+        </div>
+    </div>
+    <div class="col-9" *ngIf="menuSeleccionadoCliente != 'Clientes' && menuSeleccionadoCliente != 'ClientesCards' && menuSeleccionadoCliente != 'ListadoClientes'">
+        <router-outlet></router-outlet>
+    </div>    
+    <div class="col-9" *ngIf="menuSeleccionadoCliente == 'Clientes'">
+        <app-clientes></app-clientes>
+    </div>    
+    <div class="col-9" *ngIf="menuSeleccionadoCliente == 'ClientesCards'">
+        <app-clientes-cards (clienteEditar)="editarCliente($event)"></app-clientes-cards>
+    </div>
+    <div class="col-9" *ngIf="menuSeleccionadoCliente == 'ListadoClientes'">
+        <app-clientes-list (clienteEditar)="editarCliente($event)"></app-clientes-list>
+    </div>
+</div>

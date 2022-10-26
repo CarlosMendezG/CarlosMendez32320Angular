@@ -1,0 +1,120 @@
+<div>
+    <h3 class="text-danger text-center">Empleados</h3>
+    <hr class="mb-4">
+    <div>
+        <button class="btn btn-secondary shadow-sm text-success" (click)="agregarEmpleado()" [disabled]="!terminoCarga">
+            <div class="d-flex flex-row align-items-center text-success">
+                <i class="material-icons">
+                    add_circle
+                </i>
+                <b class="d-none d-lg-inline-block ml-2">Nuevo</b>
+            </div>
+        </button>    
+        <button class="btn btn-secondary shadow-sm text-success" (click)="validarDatosCfdi40()" [disabled]="!terminoCarga">
+            <div class="d-flex flex-row align-items-center text-success">
+                <i class="material-icons">
+                    task
+                </i>
+                <b class="d-none d-lg-inline-block ml-2">Validar Datos</b>
+                <!-- tooltip="Validar datos de los empleados para el timbrado CFDI 4.0" -->
+            </div>
+        </button>
+
+        <mat-form-field appearance="standard">
+            <mat-label>Filtro</mat-label>
+            <input matInput (keyup)="aplicarFiltro($event)" placeholder="Buscar..." #input>
+        </mat-form-field>
+    </div>
+  
+    <div class="mat-elevation-z8" *ngIf="columnas && terminoCarga">
+        <table mat-table [dataSource]="dataSource" class="listado-table" matSort>
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.id}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="nombre">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.nombre}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="rfc">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> RFC </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.rfc}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="curp">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> CURP </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.curp}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="imss">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> IMSS </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.imss}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="correo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Correo </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.correo}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="sueldo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Sueldo </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.sueldo}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="sdi">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> SDI </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.sdi}} </td>
+            </ng-container>
+                
+            <ng-container matColumnDef="alta">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Alta </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.alta | date:'dd MMMM yyyy' | titlecase}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="baja">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Baja </th>
+                <td mat-cell *matCellDef="let empleado">
+                    <span> {{ empleado.esBaja ? (empleado.baja | date: 'mediumDate' | titlecase) : '--' }} </span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="departamento">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Departamento</th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.departamento}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="horario">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Horario </th>
+                <td mat-cell *matCellDef="let empleado"> {{empleado.horario}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                <td mat-cell *matCellDef="let empleado">  
+                    <button mat-raised-button color="primary">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-raised-button color="warn">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+            
+            <div *ngIf="columnas">
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row (click)="clickedRows.add(row)" [class.listado-row-is-clicked]="clickedRows.has(row)" *matRowDef="let row; columns: columnas;"></tr>
+        
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="4">No existe información a mostrar{{ input.value != '' ? ' con el filtro: ' + input.value : '' }}</td>
+                </tr>
+            </div>            
+        </table>
+        
+        <div *ngIf="true">
+            <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons aria-label="Selecciona la página de los empleados"></mat-paginator>
+        </div>
+    </div>
+  
+  </div>

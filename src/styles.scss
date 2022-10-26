@@ -1,0 +1,41 @@
+@import "~bootstrap/scss/bootstrap";
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.img-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.yellow-bar {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  height: 3.5px;
+  background: #fa0000;
+  display: block;
+  left: 0;
+  width: 100%;
+  transition: left 0.2s ease;
+  -webkit-transition: left 0.2s ease;
+}
+
+small {
+  font-size: 80%;
+}
+
+small.text-muted {
+  font-weight: 600;
+}
+
+small.text-muted-gris {
+  font-weight: 600;
+  background-color:rgb(238, 238, 238)
+}
+
+small.text-muted-primary {
+  font-weight: 600;
+}
+

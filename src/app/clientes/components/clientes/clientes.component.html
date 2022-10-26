@@ -1,0 +1,79 @@
+<div class="row">
+    <h1>Clientes</h1>
+</div>
+<form [formGroup]="formularioReactivo" (ngSubmit)="submitForm()">
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="id">Id:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="id" [readonly]="true">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="nombre">Nombre:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="nombre" [readonly]="!editando">
+        </div>
+        <div *ngIf="!patronCorrecto('nombre') && !faltaLongitud('nombre') && esRequerido('nombre')">
+            <small class="text-primary">* el campo es requerido</small>
+        </div>
+        <div *ngIf="!patronCorrecto('nombre') && faltaLongitud('nombre')">
+            <small class="text-primary">* El nombre debe tener una longitud mínimo de 5</small>
+        </div>
+        <div *ngIf="patronCorrecto('nombre')">
+            <small class="text-primary">* El nombre debe tener al menos 5 letras</small>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="rfc">RFC:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="rfc" [readonly]="!editando">
+        </div>
+        <div *ngIf="!patronCorrecto('rfc') && !faltaLongitud('rfc') && esRequerido('rfc')">
+            <small class="text-primary">* el campo es requerido</small>
+        </div>
+        <div *ngIf="!patronCorrecto('rfc') && faltaLongitud('rfc')">
+            <small class="text-primary">* El RFC debe tener una longitud mínimo de 13</small>
+        </div>
+        <div *ngIf="patronCorrecto('rfc')">
+            <small class="text-primary">* El RFC no tiene el patrón correcto, el formato debe ser 4 letras mayúsculas, año, mes y día de nacimiento (en 2 caracteres cada uno), y 3 caracteres para homoclave</small>
+            <br>
+            <img src="../../../assets/imagenes/rfc.jpg" alt="RFC" width="500" height="356">
+        </div>
+    </div>
+    <!-- <div class="row mb-1">
+        <div class="col-2">
+            <label for="alta">Alta:</label>
+        </div>
+        <div class="col-10">
+            <input type="date" formControlName="alta" [readonly]="!editando">
+        </div>
+        <div *ngIf="esRequerido('alta')">
+            <small class="text-primary">* el campo es requerido</small>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="baja">Baja:</label>
+        </div>
+        <div class="col-10">
+            <input type="date" formControlName="baja" [readonly]="!editando">
+        </div>
+    </div> -->
+                
+    <div class="row mt-3">
+        <div class="col-8" *ngIf="!editando">
+            <button class="btn btn-success" (click)="editando = true">Editar datos</button>
+            <button class="btn btn-success" (click)="agregarEmpleado()">Agregar cliente</button>
+        </div>
+        <div class="col-8" *ngIf="editando">
+            <button class="btn btn-primary" (click)="cargarDatosOriginales()">Cancelar</button>            
+            <button class="btn btn-success" type="submit" [disabled]="!formularioReactivo.valid">Guardar datos</button>
+        </div>
+    </div>
+</form>

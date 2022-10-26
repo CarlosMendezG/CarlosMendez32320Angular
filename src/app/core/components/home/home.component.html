@@ -1,0 +1,7 @@
+<div class="text-center mt-4">
+    <h2><b>Bienvenido {{usuario?.nombre || 'Usuario sin registrar'}} !!!</b></h2>
+    <small>Inicio de sesión	: {{ usuario?.logIn | date:'dd MMMM yyyy HH:mm' | titlecase }}</small>
+    <br>
+    <b>{{tipoUsuario}}</b>
+</div>
+<img class="img-center" src="../../../assets/img/emprersa.jpg" alt="Empresa" width="500" height="237">
