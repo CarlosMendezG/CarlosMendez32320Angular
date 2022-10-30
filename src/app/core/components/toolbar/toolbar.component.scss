@@ -2,7 +2,7 @@
   flex: 1 1 auto;
 }
 
-::ng-deep .mat-menu-content{
+::ng-deep .mat-menu-content {
   background-color: rgb(243, 243, 243);
 }
 
@@ -12,13 +12,23 @@
   height: 35px;
 }
 
-button.mat-menu-item{
-    background-color: rgb(243, 243, 243);
+.cursor-text {
+  cursor: pointer;
+  user-select: none;
+}
+
+.cursor-chevron {
+  user-select: none;
+  cursor: default;
+}
+
+button.mat-menu-item {
+  background-color: rgb(243, 243, 243);
 }
 
 button.mat-menu-item:hover {
-    background-color: navy;
-    color: white !important;
+  background-color: navy;
+  color: white !important;
 }
 
 .buttonIcon {
@@ -33,27 +43,37 @@ button.mat-menu-item:hover {
   color: red !important;
 }
 
-.mat-menu-item .mat-icon{
+.mat-menu-item .mat-icon {
   color: navy !important;
 }
 
-.mat-menu-item:hover .mat-icon{
+.mat-menu-item:hover .mat-icon {
   color: white !important;
 }
 
 .mat-toolbar {
   color: navy;
-  background: #F2F2F2;
+  background: none;
   height: 50px;
+  font-size: 16px;
+  background: #F2F2F2;
 }
 
 .menuBotones {
   color: navy;
-  background-color: #FAFAFA;
-  text-align: center;   
+  text-align: center;
+  // background-color: #fafafa;
 }
 
+.btn-usuario {
+  background-color: white;
+  color: navy;
+  border: 2px solid #f0f0f0;
+}
+.menuBotones a:hover {
+  background-color: #f0f0f0;
+  color: black;
+}
 // .mat-icon {
 //   color: navy !important;
 // }
-

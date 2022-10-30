@@ -2,6 +2,10 @@
     <mat-label>Filtro</mat-label>
     <input matInput (keyup)="aplicarFiltro($event)" placeholder="Buscar..." #input>
 </mat-form-field>
+<button mat-raised-button class="px-2 bg-success text-white" (click)="editarCliente(0)">
+    <mat-icon>add</mat-icon>
+    Agregar cliente
+</button>
 
 <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" class="listado-table" matSort>
@@ -56,6 +60,9 @@
                 <button mat-raised-button color="primary" (click)="editarCliente(cliente.id)">
                     <mat-icon>edit</mat-icon>
                 </button>
+                <button mat-raised-button color="primary" (click)="detalleCliente(cliente.id)">
+                    <mat-icon>visibility</mat-icon>
+                </button>
                 <button mat-raised-button color="warn" (click)="eliminarClienteClick(cliente.id)">
                     <mat-icon>delete</mat-icon>
                 </button>
@@ -71,4 +78,9 @@
     </table>
 
     <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons aria-label="Selecciona la página de los clientes"></mat-paginator>
+</div>
+
+
+<div class="p-3" *ngIf="error">
+    {{error | json}}
 </div>

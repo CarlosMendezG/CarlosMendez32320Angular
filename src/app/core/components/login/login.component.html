@@ -13,6 +13,10 @@
                 Usuario invalido
             </mat-error>
         </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Contraseña</mat-label>
+            <input matInput [formControl]="contrasenna">
+        </mat-form-field>
     </div>
     <div mat-dialog-actions align="end">
         <button mat-raised-button color="primary" (click)="seleccionarUsuario()">
@@ -26,12 +30,6 @@
     </div>
 </form>
 
-<!-- <mat-form-field appearance="outline" *ngIf="toggle[i]">
-    <mat-label>Select Purpose</mat-label>
-     <mat-select name="purposes" #purposeModel="ngModel" [(ngModel)]="purpose.id" [value]="purpose.id" (selectionChange)="onPurposeChange(purposeModel, purpose.id)">
-      <mat-option>Select Purpose</mat-option>
-      <mat-option *ngFor="let p of purposeList" [value]="p.id" >
-      {{p.title}} {{p.id}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field> -->
+<div class="mt-5 text-danger" *ngIf="error">
+    ** {{ error }}
+</div>

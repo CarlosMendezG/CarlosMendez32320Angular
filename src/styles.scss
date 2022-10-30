@@ -1,7 +1,13 @@
 @import "~bootstrap/scss/bootstrap";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .img-center {
   display: block;
@@ -18,8 +24,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   display: block;
   left: 0;
   width: 100%;
-  transition: left 0.2s ease;
-  -webkit-transition: left 0.2s ease;
+  transition: color 0.3s ease;
+  -webkit-transition: color 0.3s ease;
 }
 
 small {
@@ -32,10 +38,9 @@ small.text-muted {
 
 small.text-muted-gris {
   font-weight: 600;
-  background-color:rgb(238, 238, 238)
+  background-color: rgb(238, 238, 238);
 }
 
 small.text-muted-primary {
   font-weight: 600;
 }
-

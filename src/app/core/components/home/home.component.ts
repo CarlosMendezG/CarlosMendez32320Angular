@@ -1,38 +1,44 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { $tipoUsuario, Usuarios } from 'src/app/models/usuario';
-import { UsuariosService } from 'src/app/services/usuarios.service';
-import { LoginComponent } from '../login/login.component';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Sesion } from 'src/app/models/sesion';
+import { $tipoUsuario } from 'src/app/models/usuario';
+import { SesionService } from 'src/app/services/sesion.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
-
-  constructor(
-    private usuarioServicio: UsuariosService,
-    private dialog: MatDialog
-  ) {
-
-  }
-
-  public usuario: Usuarios | undefined = this.usuarioServicio.obtenerUsuarioActual();
-  public tipoUsuario: string = "";
+export class HomeComponent implements OnInit, OnDestroy {
+  public sesionSubscription!: Subscription;
+  public sesion$: Observable<Sesion>;
+  public sesion: Sesion = { activa: false, usuario: undefined };
   public tiposUsuario = $tipoUsuario;
 
-  ngOnInit(): void {
-    const logIn = this.dialog.open(LoginComponent, {
-      data: this.usuario,
-      width: '350px'
-    });
+  constructor(
+    private sesionServicio: SesionService
+  ) {
+    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
+      map((sesion: Sesion) => this.sesion = sesion)
+    );
+  }
 
-    logIn.afterClosed().subscribe(result => {
-      console.log(`The dialog was closed ${result}`);
-      this.usuario = this.usuarioServicio.seleccionarUsuarioActual(result);
-      this.tipoUsuario = this.usuario ? this.tiposUsuario[this.usuario.tipoUsuario] : '';
-    });
+  ngOnInit(): void {
+    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
+      (sesion: Sesion) => {
+        console.log('Sesión cargada');
+        this.sesion = sesion;
+      }, (err: Error) => {
+        console.error(err);
+      }, () => {
+        this.sesionSubscription.unsubscribe;
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe;
   }
 
 }

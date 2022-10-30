@@ -1,13 +1,23 @@
-<mat-toolbar>    
+<mat-toolbar>
     <img class="px-2" src="../../../assets/img/emprersa35x.jpg" alt="Empresa" routerLink="inicio">
-    <small class="px-3" routerLink="inicio">{{ usuario?.nombre || 'Empresa' }}</small>
-    <mat-icon color="navy" *ngIf="ruta != 'inicio'">chevron_right</mat-icon>
-    <small class="px-2" *ngIf="ruta != 'inicio'" routerLink="{{ruta}}">{{ruta | titlecase}}</small>
+    <span class="px-2 text-danger">ACE Software, SA de CV</span>
+    <div *ngIf="sesion && sesion.activa">
+        <small class="px-3 cursor-text" routerLink="inicio">{{ sesion.usuario?.nombre || 'Empresa' }}</small>    
+        <mat-icon color="navy cursor-text" *ngIf="ruta != 'inicio'">chevron_right</mat-icon>
+        <mat-icon color="navy" class="cursor-chevron" *ngIf="ruta != 'inicio'">chevron_right</mat-icon>
+        <small class="px-2 cursor-text" *ngIf="ruta != 'inicio'" (click)="onClickRuta()">{{ruta | titlecase}}</small>
+    </div>    
     <span class="spacer"></span>
 
-    <button mat-button [matMenuTriggerFor]="menu">
-        <mat-icon color="navy">admin_panel_settings</mat-icon>
-        <span class="px-1">{{ usuario?.correo || 'usuario'}}</span>
+    <button class="btn-usuario" mat-button [matMenuTriggerFor]="menu">        
+        <div *ngIf="!sesion || !sesion.activa">
+            <mat-icon color="navy">admin_panel_settings</mat-icon>
+            <span class="px-2">usuario</span>
+        </div>
+        <div *ngIf="sesion && sesion.activa">
+            <mat-icon color="navy">admin_panel_settings</mat-icon>
+            <span class="px-2">{{ sesion.usuario?.correo || 'usuario'}}</span>
+        </div>        
     </button>
     <mat-menu #menu="matMenu">
         <button mat-menu-item routerLink="inicio">
@@ -33,41 +43,3 @@
         </button>
     </mat-menu>
 </mat-toolbar>
-<div class="mb-5" class="menuBotones">
-    <a mat-button routerLink="clientes" class="px-5">
-        <mat-icon>person</mat-icon>
-        <span class="px-1">Clientes</span>
-        <span class="yellow-bar" *ngIf="ruta === 'clientes'"></span>
-    </a>
-    <a mat-button routerLink="distribuidores" class="px-5">
-        <mat-icon>group</mat-icon>
-        <span class="px-1">Distribuidores</span>
-        <span class="yellow-bar" *ngIf="ruta === 'distribuidores'"></span>
-    </a>
-    <a mat-button routerLink="productos" class="px-5">
-        <mat-icon>domain_verification</mat-icon> 
-        <!-- forms_apps_script -->
-        <span class="px-1">Productos</span>
-        <span class="yellow-bar" *ngIf="ruta === 'productos'"></span>
-    </a>
-    <a mat-button routerLink="solicitudes" class="px-5">
-        <mat-icon>format_list_bulleted_add</mat-icon>
-        <span class="px-1">Solicitudes</span>
-        <span class="yellow-bar" *ngIf="ruta === 'solicitudes'"></span>
-    </a>
-    <a mat-button routerLink="autorizaciones" class="px-5">
-        <mat-icon>playlist_add_check</mat-icon>
-        <span class="px-1">Autorizaciones</span>
-        <span class="yellow-bar" *ngIf="ruta === 'autorizaciones'"></span>
-    </a>
-    <a mat-button routerLink="facturacion" class="px-5">
-        <mat-icon>fact_check</mat-icon>
-        <span class="px-1">Facturación</span>
-        <span class="yellow-bar" *ngIf="ruta === 'facturacion'"></span>
-    </a>
-    <a mat-button routerLink="tickets" class="px-5">
-        <mat-icon>summarize</mat-icon>
-        <span class="px-1">Tickets</span>
-        <span class="yellow-bar" *ngIf="ruta === 'tickets'"></span>
-    </a>
-</div>

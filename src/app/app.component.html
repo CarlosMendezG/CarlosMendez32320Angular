@@ -1,2 +1,15 @@
 <app-toolbar></app-toolbar>
-<router-outlet></router-outlet>
+<div *ngIf="esCurso">
+    <div class="row">
+        <div class="col-2">
+            <app-menu-inicial></app-menu-inicial>
+        </div>
+        <div class="col-10">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
+<div *ngIf="!esCurso">
+    <app-menu-inicial></app-menu-inicial>
+    <router-outlet></router-outlet>
+</div>

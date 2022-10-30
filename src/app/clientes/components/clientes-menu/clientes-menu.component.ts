@@ -51,6 +51,8 @@ export class ClientesMenuComponent implements OnInit {
       case '/clientes/cards':
       case 'ListadoClientes':
       case '/clientes/list':
+      case 'Detalle':
+      case '/clientes/detalle':
         this.menuSeleccionado = nuevaSelección;
         break;
       default:

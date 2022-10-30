@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { Subscription, Observable, of, from, interval } from 'rxjs';
 import { map, filter, mergeMap } from 'rxjs/operators';
 import { DialogComponent } from 'src/app/core/components/dialog/dialog.component';
@@ -19,31 +20,35 @@ export class ClientesListComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private clientesService: ClientesService
+    private clientesService: ClientesService,
+    private router: Router
   ) {
-    clientesService.obtenerClientesAsync().then(
-      (clientes: Cliente[]) => {
-        this.clientes = clientes;
-        console.log(`Clientes cargados Promesa: ${this.clientes}`);
-        // console.log(`Clientes originales por Input: ${this.clientesOrigen}`);
-      }).catch((error: { codigo: number, mensaje: string }) => {
-        console.log(`Error: código ${error.codigo} -> ${error.mensaje}. Clientes: ${this.clientes}`);
-        // console.log(`Clientes originales por Input: ${this.clientesOrigen}`);
-      });
+    // clientesService.obtenerClientesAsync().then(
+    //   (clientes: Cliente[]) => {
+    //     this.clientes = clientes;
+    //     console.log(`Clientes cargados Promesa: ${this.clientes}`);
+    //     // console.log(`Clientes originales por Input: ${this.clientesOrigen}`);
+    //   }).catch((error: { codigo: number, mensaje: string }) => {
+    //     console.log(`Error: código ${error.codigo} -> ${error.mensaje}. Clientes: ${this.clientes}`);
+    //     // console.log(`Clientes originales por Input: ${this.clientesOrigen}`);
+    //   });
 
-    this.clientesSubscription = clientesService.obtenerClientesObservable().subscribe({
-      next: (clientes: Cliente[]) => {
-        this.clientes = clientes;
-        console.log(`Clientes cargados Observable: ${this.clientes}`);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+    // this.clientesSubscription = clientesService.obtenerClientesObservable().subscribe({
+    //   next: (clientes: Cliente[]) => {
+    //     this.clientes = clientes;
+    //     console.log(`Clientes cargados Observable: ${this.clientes}`);
+    //   },
+    //   error: (error) => {
+    //     console.error(error);
+    //   }
+    // });
 
   }
 
-  public clientesSubscription: Subscription;
+  public clientes$!: Observable<Cliente[]>;
+  public clientesSubscribe!: Subscription;
+  public filtro: string = "";
+  public error: Error | undefined;
 
   // @Input()
   // public clientesOrigen: Clientes[] = [];
@@ -52,7 +57,27 @@ export class ClientesListComponent implements OnInit {
   @Output()
   public clienteEditar = new EventEmitter<number>();
   public editarCliente(clienteId: number) {
-    this.clienteEditar.emit(clienteId);
+    // if (this.href == '/clientes') {
+    //   console.log(`Solicitud de modificación del cliente por output: ${clienteId}`);
+    //   this.clienteEditar.emit(clienteId);
+    //   return;
+    // }
+    console.log(`Solicitud de modificación del cliente por ruta: ${clienteId}`);
+    this.clientesService.seleccionarClienteActual(clienteId);
+    this.router.navigate(['clientes', 'cliente']);
+  }
+
+  @Output()
+  public detalleClientes = new EventEmitter<number>();
+  public detalleCliente(clienteId: number) {
+    // if (this.href == '/clientes') {
+    //   console.log(`Solicitud de detalle del cliente por output: ${clienteId}`);
+    //   this.detalleClientes.emit(clienteId);
+    //   return;
+    // }
+    console.log(`Solicitud de detalle del cliente por ruta: ${clienteId}`);
+    this.clientesService.seleccionarClienteActual(clienteId);
+    this.router.navigate(['clientes', 'detalle']);
   }
 
   // @Output()
@@ -75,12 +100,19 @@ export class ClientesListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log(`The dialog was closed ${result}`);
       if (clienteActual.cliente != result) return;
-      this.clientesService.eliminarCliente(clienteAEliminar);
-      // this.clientes = this.clientesOrigen.filter(x => x.id != clienteAEliminar);
-      // this.dataSource = new MatTableDataSource<Clientes>(this.clientes);
-      // this.dataSource.paginator = this.paginator;
-      // this.dataSource.sort = this.sort;
-      // this.eliminarCliente.emit(clienteId);
+      this.clientesSubscribe = this.clientesService.eliminarClienteHttp(clienteAEliminar).subscribe(
+        (resultado: Cliente) => {
+          this.cargarClientes();
+        }, (err: Error) => {
+          console.error(err);
+          this.error = err;
+          setTimeout(() => {
+            this.error = undefined;
+          }, 15000);
+        }, () => {
+          this.clientesSubscribe.unsubscribe;
+        }
+      );
     });
   }
 
@@ -101,54 +133,71 @@ export class ClientesListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  public columnas: string[] = ['id', 'nombre', 'rfc', 'regimenFiscal', 'cp', 'correo', 'responsable', 'comentarios', 'tieneUnidad'];
+  public columnas: string[] = ['id', 'nombre', 'rfc', 'regimenFiscal', 'cp', 'correo', 'responsable', 'comentarios', 'tieneUnidad', 'acciones'];
   public dataSource: MatTableDataSource<Cliente> = new MatTableDataSource<Cliente>(this.clientes);
   public clickedRows: Set<Cliente> = new Set<Cliente>();
-  private merge$!: Observable<any>;
+  // private merge$!: Observable<any>;
+  private href: string = "";
+
+  private cargarClientes() {
+    this.clientes$ = this.clientesService.obtenerClientesHttp();
+    this.clientes$.subscribe(
+      (clientes: Cliente[]) => {
+        this.clientes = clientes;
+        this.dataSource = new MatTableDataSource<Cliente>(this.clientes);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }
+    );
+  }
 
   ngOnInit(): void {
     // this.clientes = this.clientesOrigen;
-    this.dataSource = new MatTableDataSource<Cliente>(this.clientes);
+    // this.dataSource = new MatTableDataSource<Cliente>(this.clientes);
     this.clickedRows = new Set<Cliente>();
 
+    this.href = this.router.url;
+    // console.log(this.router.url);
 
-    of(this.clientes).subscribe((clientes) => {
-      console.log('Desde el of', clientes);
-    });
+    this.cargarClientes();
 
-    from(this.clientes).subscribe((clientes) => {
-      console.log('Desde el from', clientes);
-    });
+    // of(this.clientes).subscribe((clientes) => {
+    //   console.log('Desde el of', clientes);
+    // });
 
-    // pipe  es para todos los observables
-    of(this.clientes).pipe(
-      // filter((clientes: Clientes[]) => clientes.nombre == 'Carlos')
-      map((clientes: Cliente[]) => clientes.filter((cliente: Cliente) => cliente.cliente == 'Carlos'))
-    ).subscribe((clientes) => {
-      console.log('Desde el of con filtro', clientes);
-    });
+    // from(this.clientes).subscribe((clientes) => {
+    //   console.log('Desde el from', clientes);
+    // });
 
-    from(this.clientes).pipe(
-      filter((cliente: Cliente) => cliente.cliente == 'Carlos')
-    ).subscribe((clientes) => {
-      console.log('Desde el from con filtro', clientes);
-    });
+    // // pipe  es para todos los observables
+    // of(this.clientes).pipe(
+    //   // filter((clientes: Clientes[]) => clientes.nombre == 'Carlos')
+    //   map((clientes: Cliente[]) => clientes.filter((cliente: Cliente) => cliente.cliente == 'Carlos'))
+    // ).subscribe((clientes) => {
+    //   console.log('Desde el of con filtro', clientes);
+    // });
 
-    of(this.clientes).pipe(
-      mergeMap(
-        (clientes: Cliente[]) => interval(1000).pipe(map(i => i + clientes[i].cliente))
-      )
-    ).subscribe((clientes) => {
-      console.log('Desde el of con mergeMap', clientes);
-    });
+    // from(this.clientes).pipe(
+    //   filter((cliente: Cliente) => cliente.cliente == 'Carlos')
+    // ).subscribe((clientes) => {
+    //   console.log('Desde el from con filtro', clientes);
+    // });
 
-    this.merge$ = of(['a', 'b', 'c', 'd']).pipe(
-      mergeMap(
-        letras => interval(2000).pipe(
-          map((i) => i + letras[i])
-        )
-      )
-    );
+    // of(this.clientes).pipe(
+    //   mergeMap(
+    //     (clientes: Cliente[]) => interval(1000).pipe(map(i => i + clientes[i].cliente))
+    //   )
+    // ).subscribe((clientes) => {
+    //   console.log('Desde el of con mergeMap', clientes);
+    // });
+
+    // this.merge$ = of(['a', 'b', 'c', 'd']).pipe(
+    //   mergeMap(
+    //     letras => interval(2000).pipe(
+    //       map((i) => i + letras[i])
+    //     )
+    //   )
+    // );
   }
 
   ngAfterViewInit() {
@@ -157,7 +206,7 @@ export class ClientesListComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.clientesSubscription.unsubscribe();
+    if (this.clientesSubscribe) this.clientesSubscribe.unsubscribe();
     // this.merge$.unsubscribe();
   }
 

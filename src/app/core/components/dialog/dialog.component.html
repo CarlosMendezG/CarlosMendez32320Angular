@@ -1,1 +1,17 @@
-<p>dialog works!</p>
+<b class="mb-2">Confirmación de eliminación</b>
+<div class="p-3">
+    <span>¿ Deseas eliminar el empleado <b>{{data.cliente}} ?</b></span>    
+</div>
+<div class="px-3 mb-2">
+    <small class="text-muted">No será posible deshacer este procedimiento</small>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="cancelarEliminar()">
+        <mat-icon>undo</mat-icon>
+        Cancelar
+    </button>
+    <button mat-raised-button [mat-dialog-close]="data.cliente" cdkFocusInitial color="accent">
+        <mat-icon>delete</mat-icon>
+        Eliminar
+    </button>
+</div>

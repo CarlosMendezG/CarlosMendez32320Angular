@@ -1,4 +1,4 @@
-export interface Usuarios {
+export interface Usuario {
     id: string,
     nombre: string,
     correo: string,
@@ -19,5 +19,6 @@ export const $tipoUsuario: { [key: number]: string } = {
     1: "Soporte",
     2: "Supervisor",
     3: "Administración",
-    4: "Top"
+    4: "Top",
+    99: "Sin Registrar"
 }

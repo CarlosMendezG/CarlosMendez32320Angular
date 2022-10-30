@@ -9,6 +9,7 @@ import { ClientesCardsComponent } from './components/clientes-cards/clientes-car
 import { ClientesMenuComponent } from './components/clientes-menu/clientes-menu.component';
 import { MaterialModule } from '../core/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ClientesDetalleComponent } from './components/clientes-detalle/clientes-detalle.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     ClientesComponent,
     ClientesListComponent,
     ClientesCardsComponent,
-    ClientesMenuComponent
+    ClientesMenuComponent,
+    ClientesDetalleComponent
   ],
   imports: [
     CommonModule,

@@ -1,1 +1,9 @@
-<p>error works!</p>
+<b class="mb-2 text-warning">Error</b>
+<div class="p-3">
+    <span>{{data}}</span>    
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-raised-button (click)="cerrarDialog()" cdkFocusInitial color="accent">        
+        Aceptar
+    </button>
+</div>

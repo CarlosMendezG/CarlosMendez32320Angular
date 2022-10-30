@@ -1,7 +1,10 @@
-<div class="text-center mt-4">
-    <h2><b>Bienvenido {{usuario?.nombre || 'Usuario sin registrar'}} !!!</b></h2>
-    <small>Inicio de sesión	: {{ usuario?.logIn | date:'dd MMMM yyyy HH:mm' | titlecase }}</small>
+<div class="text-center mt-4" *ngIf="sesion.activa">
+    <h2><b>Bienvenido {{sesion.usuario?.nombre || 'Usuario sin registrar'}} !!!</b></h2>
+    <small>Inicio de sesión	: {{sesion.usuario?.logIn | date:'dd MMMM yyyy HH:mm' | titlecase }}</small>
     <br>
-    <b>{{tipoUsuario}}</b>
+    <b>{{tiposUsuario[sesion.usuario?.tipoUsuario || 99]}}</b>
+</div>
+<div class="text-center mt-4" *ngIf="!sesion.activa">
+    <h2><b>Bienvenido Usuario sin sesión activa !!!</b></h2>
 </div>
 <img class="img-center" src="../../../assets/img/emprersa.jpg" alt="Empresa" width="500" height="237">

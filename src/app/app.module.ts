@@ -5,7 +5,6 @@ import { CoreModule } from './core/core.module';
 import { SolicitudesModule } from './solicitudes/solicitudes.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProductosModule } from './productos/productos.module';
-import { ClientesModule } from './clientes/clientes.module';
 import { DistribuidoresModule } from './distribuidores/distribuidores.module';
 import { AutorizacionesModule } from './autorizaciones/autorizaciones.module';
 import { FacturacionModule } from './facturacion/facturacion.module';
@@ -22,7 +21,6 @@ import { AppRoutingModule } from './app-routing.module';
     HttpClientModule,
     CoreModule,
     BrowserAnimationsModule,
-    ClientesModule,
     DistribuidoresModule,
     ProductosModule,
     SolicitudesModule,

@@ -1,0 +1,38 @@
+<h3>Detalle de cliente</h3>
+
+<div class="row mb-1">
+    <div class="col-2"><label for="id">Id:</label></div>
+    <div class="col-10">{{cliente?.id}}</div>
+</div>
+<div class="row mb-1">
+    <div class="col-2"><label for="nombre">Nombre:</label></div>
+    <div class="col-10">{{cliente?.cliente}}</div>    
+</div>
+<div class="row mb-1">
+    <div class="col-2"><label for="rfc">RFC:</label></div>
+    <div class="col-10">{{cliente?.rfc}}</div>    
+</div>
+<div class="row mb-1">
+    <div class="col-2"><label for="regimenFiscal">Regimen Fiscal:</label></div>
+    <div class="col-10">{{cliente?.regimenFiscal}}</div>
+</div>
+<div class="row mb-1">
+    <div class="col-2"><label for="cp">CP:</label></div>
+    <div class="col-10">{{cliente?.cp}}</div>    
+</div>
+<div class="row mb-1">
+    <div class="col-2"><label for="correo">Correo:</label></div>
+    <div class="col-10">{{cliente?.correo}}</div>    
+</div>
+<div class="row mb-1">
+    <div class="col-2"><label for="responsable">Responsable</label></div>
+    <div class="col-10">{{cliente?.responsable}}</div>    
+</div>
+<div class="row mb-1">
+    <div class="col-2"><label for="comentarios">Comentarios</label></div>
+    <div class="col-10">{{cliente?.comentarios}}</div>    
+</div>
+
+<div class="p-3" *ngIf="error">
+    {{error | json}}
+</div>

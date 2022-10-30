@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { Alert } from 'selenium-webdriver';
 import { Cliente } from 'src/app/models/cliente';
 import { ClientesService } from 'src/app/services/clientes.service';
 
@@ -8,7 +10,7 @@ import { ClientesService } from 'src/app/services/clientes.service';
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.scss']
 })
-export class ClientesComponent implements OnInit {
+export class ClientesComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
@@ -21,33 +23,65 @@ export class ClientesComponent implements OnInit {
     });
   }
 
-  public cliente: Cliente | undefined = this.clientesService.obtenerClienteActual();
+  public cliente: Cliente | undefined;
+  public clienteSubscribe!: Subscription;
+  public error: Error | undefined;
 
   public formularioReactivo: FormGroup;
 
   public editando: boolean = false;
 
+  private cargarCliente() {
+    this.formularioReactivo.patchValue({
+      id: this.cliente?.id,
+      nombre: this.cliente?.cliente,
+      rfc: this.cliente?.rfc
+    });
+    this.editando = false;
+  }
+
   submitForm(): void {
     console.log(this.formularioReactivo.value);
+    this.error = undefined;
     if (!this.formularioReactivo) return;
     if (!this.cliente) this.cliente = { id: 0, cliente: '', correo: '', rfc: '', regimenFiscal: '', cp: '', responsable: '', comentarios: '', idNEWeb: '' };
     this.cliente.cliente = this.formularioReactivo.get('nombre')?.value;
     this.cliente.rfc = this.formularioReactivo.get('rfc')?.value;
 
     if (this.cliente.id == 0) {
-      this.cliente = this.clientesService.agregarCliente(this.cliente);
-      this.formularioReactivo.patchValue({
-        id: this.cliente?.id,
-        nombre: this.cliente?.cliente,
-        rfc: this.cliente?.rfc
-      });
-      this.editando = false;
+      this.clienteSubscribe = this.clientesService.agregarClienteHttp(this.cliente).subscribe(
+        (resultado: Cliente) => {
+          this.cliente = resultado;
+          this.cargarCliente();
+        }, (err: Error) => {
+          console.error(err);
+          this.error = err;
+          setTimeout(() => {
+            this.error = undefined;
+          }, 15000);
+        }, () => {
+          this.clienteSubscribe.unsubscribe;
+        }
+      );
       return;
     }
     // let index = this.clientes.findIndex(x => x.id == cliente.id);
     // cliente.imagen = `../../../assets/imagenes/cliente${cliente.id.toString().padStart(2, "0")}.jpg`;;
-    this.clientesService.modificarCliente(this.cliente);
-    this.editando = false;
+
+    this.clienteSubscribe = this.clientesService.modificarClienteHttp(this.cliente).subscribe(
+      (resultado: Cliente) => {
+        this.cliente = resultado;
+        this.cargarCliente();
+      }, (err: Error) => {
+        console.error(err);
+        this.error = err;
+        setTimeout(() => {
+          this.error = undefined;
+        }, 15000);
+      }, () => {
+        this.clienteSubscribe.unsubscribe;
+      }
+    );
   }
 
   getFechaT(fecha: string): Date {
@@ -112,16 +146,24 @@ export class ClientesComponent implements OnInit {
 
   cargarDatosOriginales() {
     this.formularioReactivo.reset();
-    this.cliente = this.clientesService.obtenerClienteActual();
-    if (!this.cliente) {
-      this.cliente = { id: 0, cliente: '', correo: '', rfc: '', regimenFiscal: '', cp: '', responsable: '', comentarios: '', idNEWeb: '' };
-    }
-    this.formularioReactivo.patchValue({
-      id: this.cliente.id,
-      nombre: this.cliente.cliente,
-      rfc: this.cliente.rfc
-    });
-    this.editando = this.cliente.id == 0;
+    // this.cliente = this.clientesService.obtenerClienteHttp(0);
+
+    this.clienteSubscribe = this.clientesService.obtenerClienteHttp(0).subscribe(
+      (resultado: Cliente) => {
+        this.cliente = resultado;
+        if (!this.cliente) this.cliente = { id: 0, cliente: '', correo: '', rfc: '', regimenFiscal: '', cp: '', responsable: '', comentarios: '', idNEWeb: '' };
+        this.cargarCliente();
+        this.editando = this.cliente.id == 0;
+      }, (err: Error) => {
+        console.error(err);
+        this.error = err;
+        setTimeout(() => {
+          this.error = undefined;
+        }, 15000);
+      }, () => {
+        this.clienteSubscribe.unsubscribe;
+      }
+    );
   }
 
   getDateT(fecha: Date | undefined): string | undefined {
@@ -147,4 +189,7 @@ export class ClientesComponent implements OnInit {
     this.cargarDatosOriginales();
   }
 
+  ngOnDestroy(): void {
+    if (this.clienteSubscribe) this.clienteSubscribe.unsubscribe();
+  }
 }

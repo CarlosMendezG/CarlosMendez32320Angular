@@ -16,8 +16,12 @@
             </mat-card-content>
             <mat-card-actions align="end">
                 <button class="px-2" mat-flat-button color="primary" (click)="editarCliente(cliente.id)">Editar</button>
+                <button class="px-2" mat-flat-button color="primary" (click)="detalleCliente(cliente.id)">Detalle</button>
                 <button class="px-2" mat-flat-button color="warn" (click)="eliminarClienteClick(cliente.id)">Eliminar</button>
             </mat-card-actions>
         </mat-card>
     </div>
+</div>
+<div class="p-3" *ngIf="error">
+    {{error | json}}
 </div>

@@ -1,24 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Event, RouterEvent, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { Usuarios } from 'src/app/models/usuario';
-import { UsuariosService } from 'src/app/services/usuarios.service';
+import { filter, map } from 'rxjs/operators';
 import { aceSoporte_version } from '../../ace_datos';
-import { LoginComponent } from '../login/login.component';
+import { Sesion } from 'src/app/models/sesion';
+import { SesionService } from 'src/app/services/sesion.service';
+import { Observable, Subscription } from 'rxjs';
+import { LoginComponent } from 'src/app/core/components/login/login.component';
+import { $tipoUsuario } from 'src/app/models/usuario';
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent implements OnInit, OnDestroy {
+  public sesionSubscription!: Subscription;
+  public sesion$: Observable<Sesion>;
+  public sesion: Sesion = { activa: false, usuario: undefined };
+  public tiposUsuario = $tipoUsuario;
+
+  public ruta: string = "inicio";
+  public aceSoporte_version = aceSoporte_version;
 
   constructor(
-    private usuarioServicio: UsuariosService,
+    private sesionService: SesionService,
     private dialog: MatDialog,
     private readonly _router: Router
   ) {
+    this.sesion$ = this.sesionService.obtenerSesion().pipe(
+      map((sesion: Sesion) => this.sesion = sesion)
+    );
+
     _router.events.pipe(
       filter((e: Event): e is RouterEvent => e instanceof RouterEvent)
     ).subscribe((e: RouterEvent) => {
@@ -27,21 +40,37 @@ export class ToolbarComponent implements OnInit {
 
   }
 
-  public usuario: Usuarios | undefined = this.usuarioServicio.obtenerUsuarioActual();
-  public ruta: string = "inicio";
-  public aceSoporte_version = aceSoporte_version;
+  public onClickRuta() {
+    this._router.navigate([this.ruta]);
+  }
 
   public cerrarSesion() {
-    const logIn = this.dialog.open(LoginComponent, {
-      data: this.usuario,
-      width: '350px'
-    });
+    let sesion: Sesion = {
+      activa: false,
+      usuario: undefined
+    }
+    this.sesionService.ponerSesion(sesion);
+    if (this.ruta == "inicio") {
+      this._router.navigate(['autenticacion/login']);
+      return;
+    }
+    this._router.navigate(['inicio']);
 
-    logIn.afterClosed().subscribe(result => {
-      console.log(`The dialog was closed ${result}`);
-      this.usuario = this.usuarioServicio.seleccionarUsuarioActual(result);
-    });
+    // const logIn = this.dialog.open(LoginComponent, {
+    //   data: '',
+    //   width: '350px'
+    // });
+
+    // logIn.afterClosed().subscribe(result => {
+    //   console.log(`The dialog was closed ${result}`);
+    //   // this.usuario = this.usuarioServicio.seleccionarUsuarioActual(result);
+    // });
   }
+
+  // public obtenerEmpresa(): String {
+  //   if (!this.sesion || !this.sesion.usuario || !this.sesion.usuario.nombre) return 'Empresa';
+  //   return this.sesion.usuario.nombre;
+  // }
 
   private obtenerRuta(url: string) {
     if (!url) {
@@ -58,6 +87,20 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.obtenerRuta(this._router.url);
+    this.sesionSubscription = this.sesionService.obtenerSesion().subscribe(
+      (sesion: Sesion) => {
+        console.log('Sesión cargada');
+        this.sesion = sesion;
+      }, (err: Error) => {
+        console.error(err);
+      }, () => {
+        this.sesionSubscription.unsubscribe;
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe;
   }
 
 }

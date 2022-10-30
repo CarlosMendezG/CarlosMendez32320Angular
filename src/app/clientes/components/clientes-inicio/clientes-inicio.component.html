@@ -4,22 +4,29 @@
             (mostrarDatosClientes)="cambioMostrarDatosCliente($event)"></app-clientes-menu>    
         <div class="p-1" *ngIf="mostrarDatosCliente">        
             <b class="px-2">Cliente sincrónica</b>
-            <small>{{clientes | json }}</small>
-            <hr>
+            <!-- <small>{{clientes | json }}</small>
+            <hr> -->
             <b class="px-2">Cliente observable</b>
             <small >{{clientes$ | async | json}}</small>
         </div>
     </div>
-    <div class="col-9" *ngIf="menuSeleccionadoCliente != 'Clientes' && menuSeleccionadoCliente != 'ClientesCards' && menuSeleccionadoCliente != 'ListadoClientes'">
+    <div class="col-9" *ngIf="menuSeleccionadoCliente != 'Clientes' && menuSeleccionadoCliente != 'ClientesCards' && menuSeleccionadoCliente != 'ListadoClientes' && menuSeleccionadoCliente != 'Detalle'">
         <router-outlet></router-outlet>
     </div>    
     <div class="col-9" *ngIf="menuSeleccionadoCliente == 'Clientes'">
         <app-clientes></app-clientes>
     </div>    
     <div class="col-9" *ngIf="menuSeleccionadoCliente == 'ClientesCards'">
-        <app-clientes-cards (clienteEditar)="editarCliente($event)"></app-clientes-cards>
+        <app-clientes-cards (clienteEditar)="editarCliente($event)" (detalleClientes)="detalleClientes($event)"></app-clientes-cards>
     </div>
     <div class="col-9" *ngIf="menuSeleccionadoCliente == 'ListadoClientes'">
-        <app-clientes-list (clienteEditar)="editarCliente($event)"></app-clientes-list>
+        <app-clientes-list (clienteEditar)="editarCliente($event)" (detalleClientes)="detalleClientes($event)"></app-clientes-list>
     </div>
+    <div class="col-9" *ngIf="menuSeleccionadoCliente == 'Detalle'">
+        <app-clientes-detalle></app-clientes-detalle>
+    </div>
+</div>
+
+<div class="p-3" *ngIf="error">
+    {{error | json}}
 </div>
