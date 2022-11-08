@@ -1,38 +1,38 @@
-<div class="mb-5" class="menuBotones">
-    <a mat-button routerLink="clientes/list" class="px-5">
-        <mat-icon>person</mat-icon>
-        <span class="px-1">Clientes</span>
-        <span class="yellow-bar" *ngIf="ruta === 'clientes'"></span>
-    </a>
-    <a mat-button routerLink="distribuidores" class="px-5">
-        <mat-icon>group</mat-icon>
-        <span class="px-1">Distribuidores</span>
-        <span class="yellow-bar" *ngIf="ruta === 'distribuidores'"></span>
-    </a>
-    <a mat-button routerLink="productos" class="px-5">
-        <mat-icon>domain_verification</mat-icon> 
-        <!-- forms_apps_script -->
-        <span class="px-1">Productos</span>
-        <span class="yellow-bar" *ngIf="ruta === 'productos'"></span>
-    </a>
-    <a mat-button routerLink="solicitudes" class="px-5">
-        <mat-icon>format_list_bulleted_add</mat-icon>
-        <span class="px-1">Solicitudes</span>
-        <span class="yellow-bar" *ngIf="ruta === 'solicitudes'"></span>
-    </a>
-    <a mat-button routerLink="autorizaciones" class="px-5">
-        <mat-icon>playlist_add_check</mat-icon>
-        <span class="px-1">Autorizaciones</span>
-        <span class="yellow-bar" *ngIf="ruta === 'autorizaciones'"></span>
-    </a>
-    <a mat-button routerLink="facturacion" class="px-5">
-        <mat-icon>fact_check</mat-icon>
-        <span class="px-1">Facturación</span>
-        <span class="yellow-bar" *ngIf="ruta === 'facturacion'"></span>
-    </a>
-    <a mat-button routerLink="tickets" class="px-5">
-        <mat-icon>summarize</mat-icon>
-        <span class="px-1">Tickets</span>
-        <span class="yellow-bar" *ngIf="ruta === 'tickets'"></span>
-    </a>
+<div class="mb-5" class="menuBotones text-center">
+  <a mat-flat-button routerLink="clientes/list" class="px-5">
+    <mat-icon>person</mat-icon>
+    <span class="px-1">Clientes</span>
+    <span class="yellow-bar" *ngIf="ruta === 'clientes'"></span>
+  </a>
+  <a mat-flat-button routerLink="distribuidores" class="px-5">
+    <mat-icon>group</mat-icon>
+    <span class="px-1">Distribuidores</span>
+    <span class="yellow-bar" *ngIf="ruta === 'distribuidores'"></span>
+  </a>
+  <a mat-flat-button routerLink="productos" class="px-5">
+    <mat-icon>domain_verification</mat-icon>
+    <!-- forms_apps_script -->
+    <span class="px-1">Productos</span>
+    <span class="yellow-bar" *ngIf="ruta === 'productos'"></span>
+  </a>
+  <a mat-flat-button routerLink="solicitudes/solicitudes" class="px-5">
+    <mat-icon>format_list_bulleted_add</mat-icon>
+    <span class="px-1">Solicitudes</span>
+    <span class="yellow-bar" *ngIf="ruta === 'solicitudes'"></span>
+  </a>
+  <a mat-flat-button routerLink="autorizaciones" class="px-5">
+    <mat-icon>playlist_add_check</mat-icon>
+    <span class="px-1">Autorizaciones</span>
+    <span class="yellow-bar" *ngIf="ruta === 'autorizaciones'"></span>
+  </a>
+  <a mat-flat-button routerLink="facturacion" class="px-5">
+    <mat-icon>fact_check</mat-icon>
+    <span class="px-1">Facturación</span>
+    <span class="yellow-bar" *ngIf="ruta === 'facturacion'"></span>
+  </a>
+  <a mat-flat-button routerLink="tickets" class="px-5">
+    <mat-icon>summarize</mat-icon>
+    <span class="px-1">Tickets</span>
+    <span class="yellow-bar" *ngIf="ruta === 'tickets'"></span>
+  </a>
 </div>

@@ -1,0 +1,66 @@
+<div class="row px-2">
+    <div class="col-6">
+        <mat-form-field appearance="standard">
+            <mat-label>Filtro</mat-label>
+            <input matInput (keyup)="aplicarFiltro($event)" placeholder="Buscar..." #input>
+        </mat-form-field>
+    </div>
+    
+    <div class="col-6 mt-2" align="end">
+        <button class="btn btn-outline-success" mat-raised-button (click)="nuevaSolicitud()">
+            <mat-icon>add</mat-icon>
+            Nueva
+        </button>
+        <button class="btn btn-outline-primary" mat-raised-button (click)="esListado = !esListado">
+            <mat-icon>table_view</mat-icon>            
+        </button>
+    </div>    
+</div>
+<div class="row p-2" *ngIf="!esListado">
+    <div *ngFor="let solicitud of solicitudes$ | async" class="col-4">
+        <mat-card>
+            <mat-card-title (click)="seleccionarSolicitud(solicitud.id)">
+                <div class="row">
+                    <div class="col-9">
+                        <span>{{solicitud.cliente}}</span>
+                        <span class="text-title2 px-3">{{solicitud.correoCliente}}</span>
+                    </div>
+                    <div class="col-3" *ngIf="solicitud.asignadoA && solicitud.usuarioAsignado">
+                        <span class="text-title3" >{{solicitud.usuarioAsignado}}</span>
+                    </div>
+                </div>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <span>Aplicación: {{solicitud.appNombre}} v {{solicitud.version | number: "1.2"}} - {{tipoMovimiento[solicitud.tipoMovimiento]}}</span>
+                <br>
+                <span>Fecha: {{solicitud.fechaRegistro | date: "dd MMM yyyy HH:mm"}}</span>
+            </mat-card-subtitle>
+
+            <mat-card-content (click)="seleccionarSolicitud(solicitud.id)">
+                <div class="row">
+                    <span class="col-6">Forma de pago: {{tipoPago[solicitud.pagoTipo]}}</span>
+                    <span class="col-6">Fecha: {{solicitud.pagoFecha}}</span>
+                </div>
+                <div class="row">
+                    <span class="col-6">Referencia: {{solicitud.pagoFolio}}</span>                
+                    <span class="col-6">Importe: {{solicitud.pagoImporte}}</span>
+                </div>
+                <div class="row" *ngIf="solicitud.pagoCfdiAdd > 0">
+                    <span class="col-6">Folios Adicionales: {{solicitud.pagoFolio}}</span>                
+                </div>
+                <span>Observaciones: {{solicitud.observaciones}}</span>
+            </mat-card-content>
+            <mat-card-actions align="end">          
+                <button class="btn btn-outline-primary px-2" mat-raised-button (click)="seleccionarSolicitud(solicitud.id)">
+                    <mat-icon>edit</mat-icon>
+                    Editar
+                </button>
+
+                <button class="btn btn-outline-danger px-2" mat-raised-button (click)="eliminarSolicitud(solicitud.id)">
+                    <mat-icon>close</mat-icon>
+                    Eliminar
+                </button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

@@ -69,7 +69,7 @@
     <div class="row mt-3">
         <div class="col-8" *ngIf="!editando">
             <button class="btn btn-success" (click)="editando = true">Editar datos</button>
-            <button class="btn btn-success" (click)="agregarEmpleado()">Agregar cliente</button>
+            <button class="btn btn-success" id="btnAgregar" (click)="agregarEmpleado()">Agregar cliente</button>
         </div>
         <div class="col-8" *ngIf="editando">
             <button class="btn btn-primary" (click)="cargarDatosOriginales()">Cancelar</button>            
@@ -78,6 +78,14 @@
     </div>
 </form>
 
+<div id="detalle-cliente"> **ngIf="nuevoCliente"
+    Cliente:
+    <pre>
+        {{cliente | json}}
+    </pre>
+</div>
+
 <div class="p-3" *ngIf="error">
     {{error | json}}
 </div>
+

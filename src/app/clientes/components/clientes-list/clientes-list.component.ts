@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -16,7 +16,7 @@ import { ClientesService } from 'src/app/services/clientes.service';
   templateUrl: './clientes-list.component.html',
   styleUrls: ['./clientes-list.component.scss']
 })
-export class ClientesListComponent implements OnInit {
+export class ClientesListComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,

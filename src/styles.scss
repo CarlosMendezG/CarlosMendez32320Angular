@@ -4,6 +4,7 @@ html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -13,19 +14,6 @@ body {
   display: block;
   margin-left: auto;
   margin-right: auto;
-}
-
-.yellow-bar {
-  position: absolute;
-  z-index: 1;
-  bottom: 0;
-  height: 3.5px;
-  background: #fa0000;
-  display: block;
-  left: 0;
-  width: 100%;
-  transition: color 0.3s ease;
-  -webkit-transition: color 0.3s ease;
 }
 
 small {
@@ -43,4 +31,8 @@ small.text-muted-gris {
 
 small.text-muted-primary {
   font-weight: 600;
+}
+
+btn-outline-green {
+  color: green;
 }

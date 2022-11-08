@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { Alert } from 'selenium-webdriver';
 import { Cliente } from 'src/app/models/cliente';
 import { ClientesService } from 'src/app/services/clientes.service';
 
@@ -25,6 +24,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   public cliente: Cliente | undefined;
   public clienteSubscribe!: Subscription;
+  public nuevoCliente: boolean = false;
   public error: Error | undefined;
 
   public formularioReactivo: FormGroup;
@@ -134,6 +134,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
   }
 
   agregarEmpleado() {
+    this.nuevoCliente = true;
     this.formularioReactivo.reset();
     this.cliente = { id: 0, cliente: '', correo: '', rfc: '', regimenFiscal: '', cp: '', responsable: '', comentarios: '', idNEWeb: '' };
     this.formularioReactivo.patchValue({
@@ -187,6 +188,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.cargarDatosOriginales();
+    this.nuevoCliente = false;
   }
 
   ngOnDestroy(): void {

@@ -1,12 +1,9 @@
-import { Byte } from "@angular/compiler/src/util";
-
 export interface Solicitud {
     id: number;
     appId: string;
     version: number;
     ace_ClientId: number;
     fechaRegistro: Date;
-    tipoRegistro: string;
     tipoMovimiento: string;
     solicitud: string;
     numHDD: string;
@@ -20,6 +17,7 @@ export interface Solicitud {
     pagoFolio: string;
     pagoFecha: Date;
     pagoImporte: number;
-    pagoImagen: Byte[];
+    pagoImagen: Blob;
     asignadoA: string;
+    pagoCfdiAdd: number;
 }

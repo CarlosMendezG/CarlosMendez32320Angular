@@ -12,6 +12,7 @@ import { TicketsModule } from './tickets/tickets.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 
+
 @NgModule({
   declarations: [
     AppComponent

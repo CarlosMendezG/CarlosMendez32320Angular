@@ -1,9 +1,25 @@
-  .menuBotones {
-    color: navy;
-    background-color: #F9F9F9;
-  }
+a {
+  color: navy;
+}
 
-  // .menuBotones:hover {
-  //   color: white;
-  //   background-color: navy;
-  // }
+span:hover {
+  color: #aab7b8;
+}
+
+.yellow-bar {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  height: 3.5px;
+  background: #fa0000;
+  display: block;
+  left: 0;
+  width: 100%;
+  transition: color 0.3s ease;
+  -webkit-transition: color 0.3s ease;
+}
+
+// .menuBotones:hover {
+//   color: white;
+//   background-color: navy;
+// }

@@ -7,7 +7,7 @@
 }
 
 .mat-menu-item {
-  color: navy !important;
+  color: navy;
   line-height: 35px;
   height: 35px;
 }
@@ -22,6 +22,10 @@
   cursor: default;
 }
 
+.cursor-text:hover {
+  color: #aab7b8;
+}
+
 button.mat-menu-item {
   background-color: rgb(243, 243, 243);
 }
@@ -32,20 +36,20 @@ button.mat-menu-item:hover {
 }
 
 .buttonIcon {
-  color: navy !important;
+  color: navy;
 }
 
 .menuItemIcon {
-  color: navy !important;
+  color: navy;
 }
 
 .menuItemIconRed {
   color: red !important;
 }
 
-.mat-menu-item .mat-icon {
-  color: navy !important;
-}
+// .mat-menu-item .mat-icon {
+//   color: navy;
+// }
 
 .mat-menu-item:hover .mat-icon {
   color: white !important;
@@ -56,13 +60,13 @@ button.mat-menu-item:hover {
   background: none;
   height: 50px;
   font-size: 16px;
-  background: #F2F2F2;
+  background: #f2f2f2;
 }
 
 .menuBotones {
   color: navy;
   text-align: center;
-  // background-color: #fafafa;
+  background-color: #fafafa;
 }
 
 .btn-usuario {
@@ -74,6 +78,11 @@ button.mat-menu-item:hover {
   background-color: #f0f0f0;
   color: black;
 }
+
+.blue {
+  color: navy;
+}
+
 // .mat-icon {
 //   color: navy !important;
 // }

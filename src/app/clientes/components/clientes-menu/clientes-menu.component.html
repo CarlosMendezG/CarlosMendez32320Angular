@@ -1,5 +1,5 @@
-<div class="mx-2">
-    <div class="col-12  text-left" [ngClass]="menuSeleccionado == 'Clientes' || menuSeleccionado == '/clientes/cliente' ? 'text-white' : 'text-primary'" routerLink="cliente"
+<div class="row">
+    <div class="col-3 text-center" [ngClass]="menuSeleccionado == 'Clientes' || menuSeleccionado == '/clientes/cliente' ? 'text-white' : 'text-primary'" routerLink="cliente"
         [ngStyle]="{'background-color': menuSeleccionado == 'Clientes' || menuSeleccionado == '/clientes/cliente' ? 'navy': 'white' }" >
         <i class="material-icons mr-1">
             person
@@ -7,7 +7,7 @@
         Clientes Edición
     </div>
     <!-- (click)="seleccionarMenu('Clientes')" -->
-    <div class="col-12  text-left" [ngClass]="menuSeleccionado == 'ClientesCards' || menuSeleccionado == '/clientes/cards' ? 'text-white' : 'text-primary'" routerLink="cards"
+    <div class="col-3 text-center" [ngClass]="menuSeleccionado == 'ClientesCards' || menuSeleccionado == '/clientes/cards' ? 'text-white' : 'text-primary'" routerLink="cards"
         [ngStyle]="{'background-color': menuSeleccionado == 'ClientesCards' || menuSeleccionado == '/clientes/cards' ? 'navy': 'white' }" >
         <i class="material-icons mr-1">
             group
@@ -15,7 +15,7 @@
         Clientes Cards
     </div>
     <!-- (click)="seleccionarMenu('ClientesCards')"  -->
-    <div class="col-12  text-left" [ngClass]="menuSeleccionado == 'ListadoClientes' || menuSeleccionado == '/clientes/list'  ? 'text-white' : 'text-primary'" routerLink="list"
+    <div class="col-3 text-center" [ngClass]="menuSeleccionado == 'ListadoClientes' || menuSeleccionado == '/clientes/list'  ? 'text-white' : 'text-primary'" routerLink="list"
          [ngStyle]="{'background-color': menuSeleccionado == 'ListadoClientes' || menuSeleccionado == '/clientes/list'  ? 'navy': 'white' }" >
         <i class="material-icons mr-1">
             table_view
@@ -23,7 +23,7 @@
         Listado de empleados
     </div>    
     <!-- (click)="seleccionarMenu('ListadoClientes')" -->
-    <div class="col-12  text-left" [ngClass]="menuSeleccionado == 'Detalle' || menuSeleccionado == '/clientes/detalle'  ? 'text-white' : 'text-primary'" routerLink="detalle"
+    <div class="col-3 text-center" [ngClass]="menuSeleccionado == 'Detalle' || menuSeleccionado == '/clientes/detalle'  ? 'text-white' : 'text-primary'" routerLink="detalle"
          [ngStyle]="{'background-color': menuSeleccionado == 'Detalle' || menuSeleccionado == '/clientes/detalle'  ? 'navy': 'white' }" >
         <i class="material-icons mr-1">
             visibility
@@ -32,8 +32,8 @@
     </div>    
     <!-- (click)="seleccionarMenu('Detalle')" -->
 </div>
-<div class="my-3">
+<!-- <div class="my-3">
     <input class="form-check-input mx-2" type="checkbox" [checked]="mostrarDatos" (change)="mostrarDatos = !mostrarDatos; mostrarDatosDeClientes ()"
         id="mostrarDatos">
     <label class="form-check-label" for="mostrarDatos">Mostrar detalle de empleados</label>
-</div>
+</div> -->
