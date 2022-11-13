@@ -3,7 +3,8 @@ export interface Usuario {
     nombre: string,
     correo: string,
     tipoUsuario: TipoUsuario,
-    logIn: Date
+    logIn: string,
+    logInDate: Date
 }
 
 export enum TipoUsuario {

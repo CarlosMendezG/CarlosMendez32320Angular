@@ -3,6 +3,7 @@ export interface Solicitud {
     appId: string;
     version: number;
     ace_ClientId: number;
+    fechaRegistroTxt: string;
     fechaRegistro: Date;
     tipoMovimiento: string;
     solicitud: string;
@@ -11,13 +12,15 @@ export interface Solicitud {
     plataforma: string;
     dato1: string;
     dato2: string;
+    datoFechaTxt: string;
     datoFecha: Date;
     observaciones: string;
     pagoTipo: string;
     pagoFolio: string;
+    pagoFechaTxt: string;
     pagoFecha: Date;
     pagoImporte: number;
-    pagoImagen: Blob;
+    // pagoImagen: Blob;
     asignadoA: string;
     pagoCfdiAdd: number;
 }

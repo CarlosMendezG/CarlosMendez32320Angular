@@ -4,12 +4,17 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Subscription, Observable, of, from, interval } from 'rxjs';
 import { map, filter, mergeMap } from 'rxjs/operators';
 import { DialogComponent } from 'src/app/core/components/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/core/components/error/error.component';
 import { Cliente } from 'src/app/models/cliente';
+import { ClienteState } from 'src/app/models/cliente.state';
+import { Estados } from 'src/app/models/states';
 import { ClientesService } from 'src/app/services/clientes.service';
+import { inicializarClientes, loadClientes, loadClientesFailure, loadClientesSuccess } from '../../state/clientes.actions';
+import { selectStateCliente, selectStateEstado } from '../../state/clientes.selectors';
 
 @Component({
   selector: 'app-clientes-list',
@@ -18,10 +23,33 @@ import { ClientesService } from 'src/app/services/clientes.service';
 })
 export class ClientesListComponent implements OnInit, OnDestroy {
 
+  public estadoCliente: Estados = Estados.sinInicializar;
+  public clientes$!: Observable<Cliente[]>;
+  public cargando$!: Observable<boolean>;
+  public clientesSubscribe!: Subscription;
+  public filtro: string = "";
+  public error: Error | undefined;
+  private inicializado: boolean = false;
+
+  // @Input()
+  // public clientesOrigen: Clientes[] = [];
+  public clientes: Cliente[] = [];
+
+  public columnas: string[] = ['id', 'nombre', 'rfc', 'regimenFiscal', 'cp', 'correo', 'responsable', 'comentarios', 'tieneUnidad', 'acciones'];
+  public dataSource: MatTableDataSource<Cliente> = new MatTableDataSource<Cliente>(this.clientes);
+  public clickedRows: Set<Cliente> = new Set<Cliente>();
+  // private merge$!: Observable<any>;
+  private href: string = "";
+  private timer: any | undefined = undefined;
+
+  @Output()
+  public clienteEditar = new EventEmitter<number>();
+
   constructor(
     private dialog: MatDialog,
     private clientesService: ClientesService,
-    private router: Router
+    private router: Router,
+    private store: Store<ClienteState>
   ) {
     // clientesService.obtenerClientesAsync().then(
     //   (clientes: Cliente[]) => {
@@ -45,17 +73,9 @@ export class ClientesListComponent implements OnInit, OnDestroy {
 
   }
 
-  public clientes$!: Observable<Cliente[]>;
-  public clientesSubscribe!: Subscription;
-  public filtro: string = "";
-  public error: Error | undefined;
 
-  // @Input()
-  // public clientesOrigen: Clientes[] = [];
-  public clientes: Cliente[] = [];
 
-  @Output()
-  public clienteEditar = new EventEmitter<number>();
+
   public editarCliente(clienteId: number) {
     // if (this.href == '/clientes') {
     //   console.log(`Solicitud de modificación del cliente por output: ${clienteId}`);
@@ -102,7 +122,9 @@ export class ClientesListComponent implements OnInit, OnDestroy {
       if (clienteActual.cliente != result) return;
       this.clientesSubscribe = this.clientesService.eliminarClienteHttp(clienteAEliminar).subscribe(
         (resultado: Cliente) => {
-          this.cargarClientes();
+          // this.store.dispatch(inicializarClientes());
+          // this.cargarClientes();
+          console.log("datos actualizados");
         }, (err: Error) => {
           console.error(err);
           this.error = err;
@@ -133,22 +155,41 @@ export class ClientesListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  public columnas: string[] = ['id', 'nombre', 'rfc', 'regimenFiscal', 'cp', 'correo', 'responsable', 'comentarios', 'tieneUnidad', 'acciones'];
-  public dataSource: MatTableDataSource<Cliente> = new MatTableDataSource<Cliente>(this.clientes);
-  public clickedRows: Set<Cliente> = new Set<Cliente>();
-  // private merge$!: Observable<any>;
-  private href: string = "";
-
   private cargarClientes() {
-    this.clientes$ = this.clientesService.obtenerClientesHttp();
-    this.clientes$.subscribe(
-      (clientes: Cliente[]) => {
-        this.clientes = clientes;
-        this.dataSource = new MatTableDataSource<Cliente>(this.clientes);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      }
-    );
+    this.store.select(selectStateEstado).pipe(
+      map((estado: Estados) => {
+        this.estadoCliente = estado;
+        clearTimeout(this.timer);
+        if (estado == Estados.cargando) {
+          this.timer = setTimeout(() => {
+            this.cargarClientes();
+          }, 1500);
+          return;
+        }
+        if (estado == Estados.datosCargados) {
+          if (this.inicializado) return;
+        } else {
+          this.store.dispatch(loadClientes()); // se envía el mensaje de que se están cargando los datos
+          this.clientes$ = this.clientesService.obtenerClientesHttp();
+        }
+        this.inicializado = true;
+        this.clientes$.subscribe({
+          next: (clientes: Cliente[]) => {
+            this.store.dispatch(loadClientesSuccess({ clientes }));
+            this.clientes = clientes;
+            this.dataSource = new MatTableDataSource<Cliente>(this.clientes);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          },
+          error: (error: any) => {
+            this.store.dispatch(loadClientesFailure(error));
+          }
+        });
+      })
+    ).subscribe(() => {
+      return;
+      console.log("Cargar estado del cliente");
+    });
   }
 
   ngOnInit(): void {
@@ -157,9 +198,12 @@ export class ClientesListComponent implements OnInit, OnDestroy {
     this.clickedRows = new Set<Cliente>();
 
     this.href = this.router.url;
-    // console.log(this.router.url);
 
+    this.inicializado = false;
+    this.clientes$ = this.store.select(selectStateCliente);
     this.cargarClientes();
+
+    // console.log(this.router.url);
 
     // of(this.clientes).subscribe((clientes) => {
     //   console.log('Desde el of', clientes);

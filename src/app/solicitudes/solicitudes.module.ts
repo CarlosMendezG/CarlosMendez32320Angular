@@ -7,10 +7,10 @@ import { SolicitudComponent } from './components/solicitud/solicitud.component';
 import { MaterialModule } from '../core/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { SolicitudesComponent } from './components/solicitudes/solicitudes.component';
-import { SolicitudNuevaComponent } from './components/solicitud-nueva/solicitud-nueva.component';
+import { SolicitudEditarComponent } from './components/solicitud-editar/solicitud-editar.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
 @NgModule({
@@ -18,14 +18,16 @@ import { SolicitudNuevaComponent } from './components/solicitud-nueva/solicitud-
     SolicitudInicioComponent,
     SolicitudComponent,
     SolicitudesComponent,
-    SolicitudNuevaComponent
+    SolicitudEditarComponent
   ],
   imports: [
     CommonModule,
     SolicitudesRoutingModule,
     MaterialModule,
     ReactiveFormsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   exports: [
 

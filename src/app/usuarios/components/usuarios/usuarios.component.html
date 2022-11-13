@@ -1,0 +1,157 @@
+<div class="row px-2">
+    <div class="col-6">
+        <mat-form-field appearance="standard" class="mr-2">
+            <mat-label>Filtro</mat-label>
+            <input matInput (keyup)="aplicarFiltro($event)" placeholder="Buscar..." #input>
+        </mat-form-field>
+        <button class="ml-2 btn btn-outline-primary" mat-raised-button [matMenuTriggerFor]="menuFiltro">
+            <mat-icon>filter_list</mat-icon>
+            <span class="px-2" *ngIf="filtroCampo">{{filtrarPor[filtroCampo]}}</span>
+        </button>
+        <mat-menu #menuFiltro="matMenu">
+            <button mat-menu-item (click)="filtroCampo = ''; aplicarFiltros()">
+                <span>Todos los campos</span>
+            </button>
+            <hr>
+            <button mat-menu-item (click)="filtroCampo = 'nombre'; aplicarFiltros()">
+                <span>Usuario</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'correo'; aplicarFiltros()">
+                <span>Correo</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'logIn'; aplicarFiltros()">
+                <span>Último ingreso</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'tipoUsuario'; aplicarFiltros()">
+                <span>Tipo de Usuario</span>
+            </button>
+        </mat-menu>
+    </div>
+
+    <div class="col-6 mt-2" align="end">
+        <button class="btn btn-outline-success" mat-raised-button (click)="nuevoUsuario()">
+            <mat-icon>add</mat-icon>
+            Nuevo
+        </button>
+        <button class="btn btn-outline-primary" mat-raised-button [matMenuTriggerFor]="menuOrderBy">
+            <mat-icon>sort_by_alpha</mat-icon>
+            <span class="px-2" *ngIf="orderBy">{{filtrarPor[orderBy]}}</span>
+            <mat-icon *ngIf="orderByDesc">vertical_align_bottom</mat-icon>
+        </button>
+        <mat-menu #menuOrderBy="matMenu">
+            <button mat-menu-item (click)="orderByDesc = !orderByDesc; aplicarFiltros()">
+                <span>{{orderByDesc ? 'Orden descendente' : 'Orden ascendente' }}</span>
+            </button>
+            <hr>
+            <button mat-menu-item (click)="orderBy = 'logIn'; aplicarFiltros()">
+                <span>Último ingreso</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'nombre'; aplicarFiltros()">
+                <span>Usuario</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'correo'; aplicarFiltros()">
+                <span>Correo</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'tipoUsuario'; aplicarFiltros()">
+                <span>Tipo de usuario</span>
+            </button>
+        </mat-menu>
+        <button class="btn btn-outline-primary" mat-raised-button (click)="esListado = !esListado">
+            <mat-icon>table_view</mat-icon>
+        </button>
+    </div>
+</div>
+<div class="row p-2" *ngIf="!esListado && cargado">
+    <div *ngFor="let usuario of usuarios" class="col-4">
+        <mat-card class="mb-3">
+            <mat-card-title (click)="seleccionarUsuario(usuario.id)">
+                <div class="row">
+                    <span>{{usuario.nombre}}</span>
+                </div>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <span>Correo: {{usuario.correo}}</span>
+            </mat-card-subtitle>
+
+            <mat-card-content (click)="seleccionarUsuario(usuario.id)">
+                <div class="row">
+                    <span>Tipo de usuario: {{tipoUsuario[usuario.tipoUsuario] | titlecase}}</span>
+                </div>
+                <div class="row">
+                    <span>Fecha: {{usuario.logInDate | date: "dd MMM yyyy HH:mm"}}</span>
+                </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <button class="btn btn-outline-primary px-2" mat-raised-button (click)="editarUsuario(usuario.id)">
+                    <mat-icon>edit</mat-icon>
+                    Editar
+                </button>
+
+                <button class="btn btn-outline-danger px-2" mat-raised-button (click)="eliminarUsuario(usuario.id)">
+                    <mat-icon>close</mat-icon>
+                    Eliminar
+                </button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+    <span class="text-center" *ngIf="!usuarios || usuarios.length == 0">No existe información a mostrar{{ filtro != '' ?
+        ' con el filtro: ' +
+        filtro : '' }}</span>
+</div>
+<div class="row p-2 mat-elevation-z8" *ngIf="esListado && cargado">
+    <table mat-table [dataSource]="dataSource" class="listado-table px-2" matSort>
+        <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+            <td mat-cell *matCellDef="let usuario" (click)="seleccionarUsuario(usuario.id)">
+                {{usuario.id}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
+            <td mat-cell *matCellDef="let usuario" (click)="seleccionarUsuario(usuario.id)">
+                {{usuario.nombre}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="correo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Correo</th>
+            <td mat-cell *matCellDef="let usuario"> {{usuario.correo}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tipoUsuario">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo de Usuario </th>
+            <td mat-cell *matCellDef="let usuario"> {{tipoUsuario[usuario.tipoUsuario] | titlecase}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="logIn">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Último ingreso </th>
+            <td mat-cell *matCellDef="let usuario"> {{usuario.logInDate | date: "dd MMM yyyy HH:mm"}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let usuario">
+                <button mat-raised-button color="primary" (click)="seleccionarUsuario(usuario.id)">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row (click)="clickedRows.add(row)" [class.listado-row-is-clicked]="clickedRows.has(row)"
+            *matRowDef="let row; columns: columnas;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">No existe información a mostrar{{ filtro != '' ? ' con el filtro: ' +
+                filtro : '' }}</td>
+        </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons
+        aria-label="Selecciona la página de los usuarios"></mat-paginator>
+
+</div>
+<div class="row py-5" *ngIf="!cargado">
+    <mat-spinner class="img-center"></mat-spinner>
+</div>

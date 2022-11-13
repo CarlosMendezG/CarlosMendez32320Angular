@@ -11,6 +11,15 @@ import { ClientesService } from 'src/app/services/clientes.service';
 })
 export class ClientesComponent implements OnInit, OnDestroy {
 
+  public cliente: Cliente | undefined;
+  public clienteSubscribe!: Subscription;
+  public nuevoCliente: boolean = false;
+  public error: Error | undefined;
+
+  public formularioReactivo: FormGroup;
+
+  public editando: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private clientesService: ClientesService
@@ -21,15 +30,6 @@ export class ClientesComponent implements OnInit, OnDestroy {
       rfc: new FormControl('', [Validators.required, Validators.minLength(13), Validators.pattern(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)])
     });
   }
-
-  public cliente: Cliente | undefined;
-  public clienteSubscribe!: Subscription;
-  public nuevoCliente: boolean = false;
-  public error: Error | undefined;
-
-  public formularioReactivo: FormGroup;
-
-  public editando: boolean = false;
 
   private cargarCliente() {
     this.formularioReactivo.patchValue({

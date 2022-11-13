@@ -1,9 +1,11 @@
 a {
   color: navy;
+  background-color: #f7f7f7;
 }
 
-span:hover {
-  color: #aab7b8;
+a:hover {
+  color: blue; // #aab7b8;  
+  background-color: white;
 }
 
 .yellow-bar {

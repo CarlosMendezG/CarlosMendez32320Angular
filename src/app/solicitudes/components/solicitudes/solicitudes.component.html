@@ -1,24 +1,88 @@
 <div class="row px-2">
     <div class="col-6">
-        <mat-form-field appearance="standard">
+        <mat-form-field appearance="standard" class="mr-2">
             <mat-label>Filtro</mat-label>
             <input matInput (keyup)="aplicarFiltro($event)" placeholder="Buscar..." #input>
         </mat-form-field>
+        <button class="ml-2 btn btn-outline-primary" mat-raised-button [matMenuTriggerFor]="menuFiltro">
+            <mat-icon>filter_list</mat-icon>
+            <span class="px-2" *ngIf="filtroCampo">{{filtrarPor[filtroCampo]}}</span>
+        </button>
+        <mat-menu #menuFiltro="matMenu">
+            <button mat-menu-item (click)="filtroCampo = ''; aplicarFiltros()">
+                <span>Todos los campos</span>
+            </button>
+            <hr>
+            <button mat-menu-item (click)="filtroCampo = 'unidad'; aplicarFiltros()">
+                <span>Unidad</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'correo'; aplicarFiltros()">
+                <span>Correo</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'asignadoA'; aplicarFiltros()">
+                <span>Asignado a</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'aplicación'; aplicarFiltros()">
+                <span>Aplicación</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'fechaRegistro'; aplicarFiltros()">
+                <span>Fecha de registro</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'pagoTipo'; aplicarFiltros()">
+                <span>Forma de pago</span>
+            </button>
+            <button mat-menu-item (click)="filtroCampo = 'pagoImporte'; aplicarFiltros()">
+                <span>Importe pagado</span>
+            </button>
+        </mat-menu>
     </div>
-    
+
     <div class="col-6 mt-2" align="end">
         <button class="btn btn-outline-success" mat-raised-button (click)="nuevaSolicitud()">
             <mat-icon>add</mat-icon>
             Nueva
         </button>
-        <button class="btn btn-outline-primary" mat-raised-button (click)="esListado = !esListado">
-            <mat-icon>table_view</mat-icon>            
+        <button class="btn btn-outline-primary" mat-raised-button [matMenuTriggerFor]="menuOrderBy">
+            <mat-icon>sort_by_alpha</mat-icon>
+            <span class="px-2" *ngIf="orderBy">{{filtrarPor[orderBy]}}</span>
+            <mat-icon *ngIf="orderByDesc">vertical_align_bottom</mat-icon>
         </button>
-    </div>    
+        <mat-menu #menuOrderBy="matMenu">
+            <button mat-menu-item (click)="orderBy = 'fechaRegistro'; aplicarFiltros()">
+                <span>Fecha de registro</span>
+            </button>
+            <hr>
+            <button mat-menu-item (click)="orderByDesc = !orderByDesc; aplicarFiltros()">
+                <span>{{orderByDesc ? 'Orden descendente' : 'Orden ascendente' }}</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'unidad'; aplicarFiltros()">
+                <span>Unidad</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'correo'; aplicarFiltros()">
+                <span>Correo</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'asignadoA'; aplicarFiltros()">
+                <span>Asignado a</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'aplicación'; aplicarFiltros()">
+                <span>Aplicación</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'pagoTipo'; aplicarFiltros()">
+                <span>Forma de pago</span>
+            </button>
+            <button mat-menu-item (click)="orderBy = 'pagoImporte'; aplicarFiltros()">
+                <span>Importe pagado</span>
+            </button>
+
+        </mat-menu>
+        <button class="btn btn-outline-primary" mat-raised-button (click)="esListado = !esListado">
+            <mat-icon>table_view</mat-icon>
+        </button>
+    </div>
 </div>
-<div class="row p-2" *ngIf="!esListado">
-    <div *ngFor="let solicitud of solicitudes$ | async" class="col-4">
-        <mat-card>
+<div class="row p-2" *ngIf="!esListado && cargado">
+    <div *ngFor="let solicitud of solicitudes" class="col-4">
+        <mat-card class="mb-3">
             <mat-card-title (click)="seleccionarSolicitud(solicitud.id)">
                 <div class="row">
                     <div class="col-9">
@@ -26,12 +90,13 @@
                         <span class="text-title2 px-3">{{solicitud.correoCliente}}</span>
                     </div>
                     <div class="col-3" *ngIf="solicitud.asignadoA && solicitud.usuarioAsignado">
-                        <span class="text-title3" >{{solicitud.usuarioAsignado}}</span>
+                        <span class="text-title3">{{solicitud.usuarioAsignado}}</span>
                     </div>
                 </div>
             </mat-card-title>
             <mat-card-subtitle>
-                <span>Aplicación: {{solicitud.appNombre}} v {{solicitud.version | number: "1.2"}} - {{tipoMovimiento[solicitud.tipoMovimiento]}}</span>
+                <span>Aplicación: {{solicitud.appNombre}} v {{solicitud.version | number: "1.2"}} -
+                    {{tipoMovimiento[solicitud.tipoMovimiento]}}</span>
                 <br>
                 <span>Fecha: {{solicitud.fechaRegistro | date: "dd MMM yyyy HH:mm"}}</span>
             </mat-card-subtitle>
@@ -39,19 +104,19 @@
             <mat-card-content (click)="seleccionarSolicitud(solicitud.id)">
                 <div class="row">
                     <span class="col-6">Forma de pago: {{tipoPago[solicitud.pagoTipo]}}</span>
-                    <span class="col-6">Fecha: {{solicitud.pagoFecha}}</span>
+                    <span class="col-6">Fecha: {{solicitud.pagoFecha | date: "dd MMM yyyy HH:mm"}}</span>
                 </div>
                 <div class="row">
-                    <span class="col-6">Referencia: {{solicitud.pagoFolio}}</span>                
+                    <span class="col-6">Referencia: {{solicitud.pagoFolio}}</span>
                     <span class="col-6">Importe: {{solicitud.pagoImporte}}</span>
                 </div>
                 <div class="row" *ngIf="solicitud.pagoCfdiAdd > 0">
-                    <span class="col-6">Folios Adicionales: {{solicitud.pagoFolio}}</span>                
+                    <span class="col-6">Folios Adicionales: {{solicitud.pagoFolio}}</span>
                 </div>
                 <span>Observaciones: {{solicitud.observaciones}}</span>
             </mat-card-content>
-            <mat-card-actions align="end">          
-                <button class="btn btn-outline-primary px-2" mat-raised-button (click)="seleccionarSolicitud(solicitud.id)">
+            <mat-card-actions align="end">
+                <button class="btn btn-outline-primary px-2" mat-raised-button (click)="editarSolicitud(solicitud.id)">
                     <mat-icon>edit</mat-icon>
                     Editar
                 </button>
@@ -63,4 +128,106 @@
             </mat-card-actions>
         </mat-card>
     </div>
+    <span class="text-center" *ngIf="!solicitudes || solicitudes.length == 0">No existe información a mostrar{{ filtro
+        != '' ? ' con el filtro: ' +
+        filtro : '' }}</span>
+</div>
+<div class="row p-2 mat-elevation-z8" *ngIf="esListado && cargado">
+    <table mat-table [dataSource]="dataSource" class="listado-table px-2" matSort>
+        <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+            <td mat-cell *matCellDef="let solicitud" (click)="seleccionarSolicitud(solicitud.id)">
+                {{solicitud.id}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="asignadoA">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Asignado a </th>
+            <td mat-cell *matCellDef="let solicitud" (click)="seleccionarSolicitud(solicitud.id)">
+                {{solicitud.usuarioAsignado}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+            <td mat-cell *matCellDef="let solicitud" (click)="seleccionarSolicitud(solicitud.id)">
+                {{solicitud.cliente}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="correo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Correo</th>
+            <td mat-cell *matCellDef="let solicitud"> {{solicitud.correo}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="aplicacion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Aplicación </th>
+            <td mat-cell *matCellDef="let solicitud"> {{solicitud.appNombre}} v {{solicitud.version | number: "1.2"}} -
+                {{tipoMovimiento[solicitud.tipoMovimiento]}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fechaRegistro">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de registro </th>
+            <td mat-cell *matCellDef="let solicitud"> {{solicitud.fechaRegistro | date: "dd MMM yyyy HH:mm"}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pagoTipo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Forma de pago </th>
+            <td mat-cell *matCellDef="let solicitud"> {{tipoPago[solicitud.pagoTipo]}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pagoFecha">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de pago </th>
+            <td mat-cell *matCellDef="let solicitud"> {{solicitud.pagoFecha | date: "dd MMM yyyy HH:mm"}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pagoReferencia">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Referencia </th>
+            <td mat-cell *matCellDef="let solicitud"> {{solicitud.pagoFolio }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pagoImporte">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Importe </th>
+            <td mat-cell *matCellDef="let solicitud"> {{solicitud.pagoImporte }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="observaciones">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Observaciones</th>
+            <td mat-cell *matCellDef="let solicitud"> {{solicitud.observaciones }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let solicitud">
+                <button mat-raised-button color="primary" (click)="seleccionarSolicitud(solicitud.id)">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row (click)="clickedRows.add(row)" [class.listado-row-is-clicked]="clickedRows.has(row)"
+            *matRowDef="let row; columns: columnas;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">No existe información a mostrar{{ filtro != '' ? ' con el filtro: ' +
+                filtro : '' }}</td>
+        </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons
+        aria-label="Selecciona la página de los clientes"></mat-paginator>
+
+</div>
+<div class="row py-5" *ngIf="!cargado">
+    <mat-spinner class="img-center"></mat-spinner>
+</div>
+<div class="row p-2 text-right"
+    *ngIf="cargado && sesion.activa && sesion.usuario && sesion.usuario.tipoUsuario != TipoUsuario.usuario">
+    <mat-checkbox [checked]="soloMostrarSinAsignar"
+        (click)="soloMostrarSinAsignar = !soloMostrarSinAsignar; aplicarFiltros()">
+        No mostrar asignados
+    </mat-checkbox>
+
+    {{soloMostrarSinAsignar}}
 </div>

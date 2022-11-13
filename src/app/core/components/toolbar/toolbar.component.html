@@ -11,12 +11,7 @@
   <small class="px-3 cursor-text" routerLink="inicio">{{
     sesion.usuario?.nombre || "Empresa"
   }}</small>
-  <mat-icon color="cursor-text" *ngIf="ruta != 'inicio'"
-    >chevron_right</mat-icon
-  >
-  <mat-icon color="navy" class="cursor-chevron" *ngIf="ruta != 'inicio'"
-    >chevron_right</mat-icon
-  >
+  <mat-icon color="cursor-text" *ngIf="ruta != 'inicio'">chevron_right</mat-icon>
   <small
     class="px-2 cursor-text"
     *ngIf="ruta != 'inicio'"

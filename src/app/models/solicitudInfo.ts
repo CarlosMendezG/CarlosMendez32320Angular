@@ -1,3 +1,4 @@
+import { MensajesSolicitud } from "./mensajesSolicitud";
 import { Solicitud } from "./solicitud";
 
 export interface SolicitudInfo extends Solicitud {
@@ -5,4 +6,5 @@ export interface SolicitudInfo extends Solicitud {
     cliente: string;
     correoCliente: string;
     usuarioAsignado: string;
+    mensajes: MensajesSolicitud[];
 }

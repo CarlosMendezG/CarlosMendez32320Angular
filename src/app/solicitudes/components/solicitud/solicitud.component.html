@@ -1,159 +1,388 @@
 <div class="contenedor">
-  <h1 class="fw-bolder">Solicitud</h1>
-    <div class="main">
-    <h2 class="fst-italic">Cliente</h2>
+  <div class="header">
+    <span class="float-start unidad">
+      <h2 class="unidadTexto">Carlos Mendez</h2>
+      <h2 class="line font">correo@correo.com</h2>
+    </span>
     <span>
-      <span class="pe-2">Nombre:</span>
-      <mat-form-field appearance="outline" class="wchico">
-        <mat-label>ID</mat-label>
-        <input matInput placeholder="ID" [readonly]="enEdicion" />
-      </mat-form-field>
-
-      <span class="ps-3">
-        <mat-form-field class="wnombre" appearance="outline">
-          <mat-label>Nombre</mat-label>
-          <input
-            matInput
-            placeholder="Escribe el Nombre del cliente"
-            [readonly]="enEdicion"
-          />
-        </mat-form-field>
-      </span>
-
-      <span class="ps-3">
-        <mat-form-field class="wrfc" appearance="outline">
-          <mat-label>R.F.C.</mat-label>
-          <input
-            matInput
-            placeholder="Escribe el R.F.C."
-            [readonly]="enEdicion"
-          />
-        </mat-form-field>
-      </span>
-
-      <button mat-raised-button class="p-2" (click)="abrirUnidadNE()">
-        <img class="icon" src="../../../assets/img/NE32x32.png"/>
+      <h1 class="fw-bolder float-start pt-4">Solicitud</h1>
+    </span>
+    <span class="float-end pt-3">
+      <button mat-raised-button (click)="abrirUnidadNE()">
+        <img class="icon" src="../../../assets/img/NE32x32.png" />
       </button>
-
-      <button mat-raised-button class="p-2" (click)="abrirUnidadNE()">
-        <img class="icon" src="../../../assets/img/FE32x32.png"/>
+      <button mat-raised-button (click)="abrirUnidadNE()">
+        <img class="icon" src="../../../assets/img/FE32x32.png" />
       </button>
-    </span>    
-
-    <mat-accordion multi>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title> Datos Generales </mat-panel-title>
-          <mat-panel-description>
-            Haz click en el campo para ver más información
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-
-        <div>
-          <span class="ps-3">
-            <mat-form-field appearance="outline" class="wgeneral">
-              <mat-label>Calle</mat-label>
-              <input
-                matInput
-                placeholder="Escribe la Calle"
-                [readonly]="enEdicion"
-              />
-            </mat-form-field>
-          </span>
-
-          <span class="ps-3">
-            <mat-form-field class="wchico" appearance="outline">
-              <mat-label>No. Ext.</mat-label>
-              <input matInput placeholder="No. Ext." [readonly]="enEdicion" />
-            </mat-form-field>
-          </span>
-
-          <span class="ps-3">
-            <mat-form-field class="wchico" appearance="outline">
-              <mat-label>No. Int.</mat-label>
-              <input matInput placeholder="No. Int." [readonly]="enEdicion" />
-            </mat-form-field>
-          </span>
-          <span class="ps-3">
-            <mat-form-field class="wgeneral" appearance="outline">
-              <mat-label>Colonia</mat-label>
-              <input matInput placeholder="Colonia" [readonly]="enEdicion" />
-            </mat-form-field>
-          </span>
-        </div>
-
-        <div>
-          <span class="ps-3">
-            <mat-form-field class="wgeneral" appearance="outline">
-              <mat-label>Municipio</mat-label>
-              <input matInput placeholder="Municipio" [readonly]="enEdicion" />
-            </mat-form-field>
-          </span>
-          <span class="ps-3">
-            <mat-form-field class="wrfc" appearance="outline">
-              <mat-label>Ciudad</mat-label>
-              <input matInput placeholder="Ciudad" [readonly]="enEdicion" />
-            </mat-form-field>
-          </span>
-          <span class="ps-3">
-            <mat-form-field class="wrfc" appearance="outline">
-              <mat-label>Estado</mat-label>
-              <input matInput placeholder="Estado" [readonly]="enEdicion" />
-            </mat-form-field>
-          </span>
-          <span class="ps-3">
-            <mat-form-field class="wchico" appearance="outline">
-              <mat-label>C.P.</mat-label>
-              <input
-                matInput
-                placeholder="C.P."
-                [formControl]="codigoPostal"
-                [readonly]="enEdicion"
-              />
-              <mat-error *ngIf="codigoPostal.invalid">{{
-                errorCodigo()
-              }}</mat-error>
-            </mat-form-field>
-          </span>
-        </div>
-        <div>
-          <span class="ps-3">
-            <mat-form-field appearance="outline">
-              <mat-label>Correo Electronico</mat-label>
-              <input
-                matInput
-                placeholder="correo@ejemplo.com"
-                [formControl]="email"
-              />
-              <mat-error *ngIf="email.invalid">{{
-                getErrorMessage()
-              }}</mat-error>
-            </mat-form-field>
-          </span>
-          <span class="ps-3">
-            <mat-form-field appearance="outline">
-              <mat-label>Teléfono</mat-label>
-              <input matInput placeholder="Teléfono" />
-            </mat-form-field>
-          </span>
-          <span class="ps-3">
-            <mat-form-field appearance="outline" class="wregimen">
-              <mat-label>Regimen Fiscal</mat-label>
-              <mat-select>
-                <mat-option value="uno">Opcion 1</mat-option>
-                <mat-option value="dos">Opcion 2</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </span>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
+    </span>
   </div>
-</div>
-<div class="py2">
-  <button mat-raised-button (click)="enEdicion = !enEdicion">
-    <mat-icon class="green">check</mat-icon>
-    <div class="px-1">Validar Código de Autorización de Uso</div>
-  </button>
-  {{ enEdicion }}
+
+  <div class="main">
+    <div>
+      <mat-accordion multi>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header class="height">
+            <div>
+              <mat-panel-title class="float-start pr">
+                Datos Registrados
+              </mat-panel-title>
+            </div>
+            <div>
+              <span class="ps-3">
+                <mat-form-field
+                  appearance="outline"
+                  class="wchico"
+                  (click)="$event.stopPropagation()"
+                >
+                  <mat-label>ID</mat-label>
+                  <input
+                    matInput
+                    placeholder="ID"
+                    [readonly]="enEdicion"
+                    (keydown.Space)="$event.stopImmediatePropagation()"
+                  />
+                </mat-form-field>
+              </span>
+              <span class="ps-3">
+                <mat-form-field
+                  class="wchico"
+                  appearance="outline"
+                  (click)="$event.stopPropagation()"
+                >
+                  <mat-label>Nombre</mat-label>
+                  <input
+                    matInput
+                    placeholder="Escribe el Nombre del cliente"
+                    [readonly]="enEdicion"
+                    (keydown.Space)="$event.stopImmediatePropagation()"
+                  />
+                </mat-form-field>
+              </span>
+              <span class="ps-3">
+                <mat-form-field
+                  class="wrfc"
+                  appearance="outline"
+                  (click)="$event.stopPropagation()"
+                >
+                  <mat-label>R.F.C.</mat-label>
+                  <input
+                    matInput
+                    placeholder="Escribe el R.F.C."
+                    (keydown.Space)="$event.stopImmediatePropagation()"
+                    [readonly]="enEdicion"
+                  />
+                </mat-form-field>
+              </span>
+            </div>
+          </mat-expansion-panel-header>
+
+          <div>
+            <span class="ps-3">
+              <mat-form-field appearance="outline" class="wgeneral">
+                <mat-label>Calle</mat-label>
+                <input
+                  matInput
+                  placeholder="Escribe la Calle"
+                  [readonly]="enEdicion"
+                />
+              </mat-form-field>
+            </span>
+
+            <span class="ps-3">
+              <mat-form-field class="wchico" appearance="outline">
+                <mat-label>No. Ext.</mat-label>
+                <input matInput placeholder="No. Ext." [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+
+            <span class="ps-3">
+              <mat-form-field class="wchico" appearance="outline">
+                <mat-label>No. Int.</mat-label>
+                <input matInput placeholder="No. Int." [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field class="wgeneral" appearance="outline">
+                <mat-label>Colonia</mat-label>
+                <input matInput placeholder="Colonia" [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+          </div>
+
+          <div>
+            <span class="ps-3">
+              <mat-form-field class="wgeneral" appearance="outline">
+                <mat-label>Municipio</mat-label>
+                <input
+                  matInput
+                  placeholder="Municipio"
+                  [readonly]="enEdicion"
+                />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field class="wrfc" appearance="outline">
+                <mat-label>Ciudad</mat-label>
+                <input matInput placeholder="Ciudad" [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field class="wrfc" appearance="outline">
+                <mat-label>Estado</mat-label>
+                <input matInput placeholder="Estado" [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field class="wchico" appearance="outline">
+                <mat-label>C.P.</mat-label>
+                <input
+                  matInput
+                  placeholder="C.P."
+                  [formControl]="codigoPostal"
+                  [readonly]="enEdicion"
+                />
+                <mat-error></mat-error>
+              </mat-form-field>
+            </span>
+          </div>
+          <div>
+            <span class="ps-3">
+              <mat-form-field appearance="outline">
+                <mat-label>Correo Electronico</mat-label>
+                <input
+                  matInput
+                  placeholder="correo@ejemplo.com"
+                  [formControl]="email"
+                />
+                <mat-error></mat-error>
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field appearance="outline">
+                <mat-label>Teléfono</mat-label>
+                <input matInput placeholder="Teléfono" />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field appearance="outline" class="wregimen">
+                <mat-label>Regimen Fiscal</mat-label>
+                <mat-select>
+                  <mat-option value="uno">Opcion 1</mat-option>
+                  <mat-option value="dos">Opcion 2</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </span>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+    <div class="pt-2">
+      <mat-accordion multi>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header class="height">
+            <div>
+              <mat-panel-title class="float-start pr">
+                Datos en la Solicitud
+              </mat-panel-title>
+            </div>
+            <div>
+              <span class="ps-3">
+                <mat-form-field
+                  appearance="outline"
+                  class="wchico"
+                  (click)="$event.stopPropagation()"
+                >
+                  <mat-label>ID</mat-label>
+                  <input
+                    matInput
+                    placeholder="ID"
+                    [readonly]="enEdicion"
+                    (keydown.Space)="$event.stopImmediatePropagation()"
+                  />
+                </mat-form-field>
+              </span>
+              <span class="ps-3">
+                <mat-form-field
+                  class="wchico"
+                  appearance="outline"
+                  (click)="$event.stopPropagation()"
+                >
+                  <mat-label>Nombre</mat-label>
+                  <input
+                    matInput
+                    placeholder="Escribe el Nombre del cliente"
+                    [readonly]="enEdicion"
+                    (keydown.Space)="$event.stopImmediatePropagation()"
+                  />
+                </mat-form-field>
+              </span>
+              <span class="ps-3">
+                <mat-form-field
+                  class="wrfc"
+                  appearance="outline"
+                  (click)="$event.stopPropagation()"
+                >
+                  <mat-label>R.F.C.</mat-label>
+                  <input
+                    matInput
+                    placeholder="Escribe el R.F.C."
+                    (keydown.Space)="$event.stopImmediatePropagation()"
+                    [readonly]="enEdicion"
+                  />
+                </mat-form-field>
+              </span>
+            </div>
+          </mat-expansion-panel-header>
+
+          <div>
+            <span class="ps-3">
+              <mat-form-field appearance="outline" class="wgeneral">
+                <mat-label>Calle</mat-label>
+                <input
+                  matInput
+                  placeholder="Escribe la Calle"
+                  [readonly]="enEdicion"
+                />
+              </mat-form-field>
+            </span>
+
+            <span class="ps-3">
+              <mat-form-field class="wchico" appearance="outline">
+                <mat-label>No. Ext.</mat-label>
+                <input matInput placeholder="No. Ext." [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+
+            <span class="ps-3">
+              <mat-form-field class="wchico" appearance="outline">
+                <mat-label>No. Int.</mat-label>
+                <input matInput placeholder="No. Int." [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field class="wgeneral" appearance="outline">
+                <mat-label>Colonia</mat-label>
+                <input matInput placeholder="Colonia" [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+          </div>
+
+          <div>
+            <span class="ps-3">
+              <mat-form-field class="wgeneral" appearance="outline">
+                <mat-label>Municipio</mat-label>
+                <input
+                  matInput
+                  placeholder="Municipio"
+                  [readonly]="enEdicion"
+                />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field class="wrfc" appearance="outline">
+                <mat-label>Ciudad</mat-label>
+                <input matInput placeholder="Ciudad" [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field class="wrfc" appearance="outline">
+                <mat-label>Estado</mat-label>
+                <input matInput placeholder="Estado" [readonly]="enEdicion" />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field class="wchico" appearance="outline">
+                <mat-label>C.P.</mat-label>
+                <input
+                  matInput
+                  placeholder="C.P."
+                  [formControl]="codigoPostal"
+                  [readonly]="enEdicion"
+                />
+                <mat-error></mat-error>
+              </mat-form-field>
+            </span>
+          </div>
+          <div>
+            <span class="ps-3">
+              <mat-form-field appearance="outline">
+                <mat-label>Correo Electronico</mat-label>
+                <input
+                  matInput
+                  placeholder="correo@ejemplo.com"
+                  [formControl]="email"
+                />
+                <mat-error></mat-error>
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field appearance="outline">
+                <mat-label>Teléfono</mat-label>
+                <input matInput placeholder="Teléfono" />
+              </mat-form-field>
+            </span>
+            <span class="ps-3">
+              <mat-form-field appearance="outline" class="wregimen">
+                <mat-label>Regimen Fiscal</mat-label>
+                <mat-select>
+                  <mat-option value="uno">Opcion 1</mat-option>
+                  <mat-option value="dos">Opcion 2</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </span>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="datosPago">
+      <div>
+        <h2>Datos del pago</h2>
+      </div>
+      <span class="ps-3">
+        <mat-form-field appearance="outline" class="wgeneral">
+          <mat-label>Tipo de pago</mat-label>
+          <mat-select>
+            <mat-option value="uno">BBVA </mat-option>
+            <mat-option value="dos">Bancomer</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </span>
+      <span class="ps-3">
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha</mat-label>
+          <input matInput [matDatepicker]="fecha" />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="fecha"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #fecha></mat-datepicker>
+        </mat-form-field>
+      </span>
+      <span class="ps-3">
+        <mat-form-field class="wgeneral" appearance="outline">
+          <mat-label>Referencia</mat-label>
+          <input matInput placeholder="Escribe la Referencia del pago" />
+        </mat-form-field>
+      </span>
+      <span class="ps-3">
+        <mat-form-field appearance="outline" floatLabel="always">
+          <mat-label>Importe</mat-label>
+          <input matInput type="number" placeholder="Coloque el importe" />
+          <span matPrefix>$&nbsp;</span>
+        </mat-form-field>
+      </span>
+      <div class="text-center">
+        <img src="../../../assets/img/pago.jpg" alt="" />
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="py2">
+    <button mat-raised-button (click)="enEdicion = !enEdicion">
+      <mat-icon class="green">check</mat-icon>
+      <div class="px-1">Validar Código de Autorización de Uso</div>
+    </button>
+    {{ enEdicion }}
+  </div> -->
 </div>

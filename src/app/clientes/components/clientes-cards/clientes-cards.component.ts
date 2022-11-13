@@ -1,9 +1,14 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cliente } from 'src/app/models/cliente';
+import { ClienteState } from 'src/app/models/cliente.state';
+import { Estados } from 'src/app/models/states';
 import { ClientesService } from 'src/app/services/clientes.service';
+import { inicializarClientes, loadClientes, loadClientesEstado, loadClientesFailure, loadClientesSuccess } from '../../state/clientes.actions';
+import { selectStateCliente, selectStateCargado, selectStateEstado } from '../../state/clientes.selectors';
 
 @Component({
   selector: 'app-clientes-cards',
@@ -12,18 +17,21 @@ import { ClientesService } from 'src/app/services/clientes.service';
 })
 export class ClientesCardsComponent implements OnInit, OnDestroy {
 
-  constructor(
-    private clientesService: ClientesService,
-    private router: Router
-  ) {
-    // this.clientes$ = this.clientesService.obtenerClientesBehaviorSubject();
-    // console.log(this.clientes$);
-  }
-
+  public estadoCliente: Estados = Estados.sinInicializar;
   public clientes$!: Observable<Cliente[]>;
   public clientesSubscribe!: Subscription;
   public filtro: string = "";
   public error: Error | undefined;
+  public Estados = Estados;
+
+  constructor(
+    private clientesService: ClientesService,
+    private router: Router,
+    private store: Store<ClienteState>
+  ) {
+    // this.clientes$ = this.clientesService.obtenerClientesBehaviorSubject();
+    // console.log(this.clientes$);
+  }
 
   @Output()
   public clienteEditar = new EventEmitter<number>();
@@ -52,6 +60,7 @@ export class ClientesCardsComponent implements OnInit, OnDestroy {
   }
 
   public eliminarClienteClick(clienteId: number) {
+    this.store.dispatch(inicializarClientes());
     this.clientesSubscribe = this.clientesService.eliminarClienteHttp(clienteId).subscribe(
       (resultado: Cliente) => {
         this.cargarClientes();
@@ -68,7 +77,14 @@ export class ClientesCardsComponent implements OnInit, OnDestroy {
   }
 
   private cargarClientes() {
-    this.clientes$ = this.clientesService.obtenerClientesHttp();
+    this.clientesService.obtenerClientesHttp().subscribe({
+      next: (clientes: Cliente[]) => {
+        this.store.dispatch(loadClientesSuccess({ clientes }))
+      },
+      error: (error: any) => {
+        this.store.dispatch(loadClientesFailure(error));
+      }
+    });
   }
 
   public aplicarFiltro(event: Event) {
@@ -82,8 +98,25 @@ export class ClientesCardsComponent implements OnInit, OnDestroy {
 
   private href: string = "";
   ngOnInit(): void {
-    this.href = this.router.url;
-    this.cargarClientes();
+    this.clientes$ = this.store.select(selectStateCliente);
+    this.store.select(selectStateEstado).pipe(
+      map((estado: Estados) => {
+        this.estadoCliente = estado;
+        if (estado == Estados.datosCargados) {
+          return;
+        }
+        if (estado == Estados.cargando) {
+          setTimeout(() => {
+            this.ngOnInit();
+          }, 1500);
+          return;
+        }
+        this.cargarClientes();
+      })
+    ).subscribe(() => {
+      return;
+      console.log("Cargar estado del cliente");
+    });
   }
 
   ngOnDestroy(): void {

@@ -10,6 +10,10 @@ import { ClientesMenuComponent } from './components/clientes-menu/clientes-menu.
 import { MaterialModule } from '../core/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ClientesDetalleComponent } from './components/clientes-detalle/clientes-detalle.component';
+import { StoreModule } from '@ngrx/store';
+import { clientesFeatureKey, reducer } from './state/clientes.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { ClienteEffects } from './state/cliente.effects';
 
 
 @NgModule({
@@ -25,7 +29,9 @@ import { ClientesDetalleComponent } from './components/clientes-detalle/clientes
     CommonModule,
     ClientesRoutingModule,
     MaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    StoreModule.forFeature(clientesFeatureKey, reducer),
+    EffectsModule.forFeature([ClienteEffects])
   ]
 })
 export class ClientesModule { }

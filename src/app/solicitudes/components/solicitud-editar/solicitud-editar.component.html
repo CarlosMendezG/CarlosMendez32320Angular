@@ -1,0 +1,85 @@
+<div class="row">
+    <h1>Solicitud</h1>
+</div>
+<form class="px-2" [formGroup]="formularioReactivo" (ngSubmit)="submitForm()">
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="id">Id:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="id" [readonly]="true">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="asignadoA">Asignado a:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="asignadoA" [readonly]="!editando">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="cliente">Cliente:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="cliente" [readonly]="!editando">
+        </div>
+        <div *ngIf="!patronCorrecto('cliente') && !faltaLongitud('cliente') && esRequerido('cliente')">
+            <small class="text-primary">* el campo es requerido</small>
+        </div>
+        <div *ngIf="!patronCorrecto('cliente') && faltaLongitud('cliente')">
+            <small class="text-primary">* El cliente debe tener una longitud mínimo de 5</small>
+        </div>
+        <div *ngIf="patronCorrecto('cliente')">
+            <small class="text-primary">* El cliente debe tener al menos 5 letras</small>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="correo">Correo:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="correo" [readonly]="!editando">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="aplicacion">Aplicación:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="aplicacion" [readonly]="!editando">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="version">Versión:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="version" [readonly]="!editando">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="tipoMovimiento">Tipo de Movimiento:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="tipoMovimiento" [readonly]="!editando">
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-8" *ngIf="!editando">
+            <button class="btn btn-success" (click)="editando = true">Editar datos</button>
+            <button class="btn btn-success" id="btnAgregar" (click)="agregarSolicitud()">Agregar solicitud</button>
+        </div>
+        <div class="col-8" *ngIf="editando">
+            <button class="btn btn-primary" (click)="cargarDatosOriginales()">Cancelar</button>
+            <button class="btn btn-success" type="submit" [disabled]="!formularioReactivo.valid">Guardar datos</button>
+        </div>
+    </div>
+</form>
+
+<div class="p-3" *ngIf="error">
+    {{error | json}}
+</div>

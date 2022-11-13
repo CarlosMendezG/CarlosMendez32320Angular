@@ -6,7 +6,6 @@ import { aceSoporte_version } from '../../ace_datos';
 import { Sesion } from 'src/app/models/sesion';
 import { SesionService } from 'src/app/services/sesion.service';
 import { Observable, Subscription } from 'rxjs';
-import { LoginComponent } from 'src/app/core/components/login/login.component';
 import { $tipoUsuario } from 'src/app/models/usuario';
 
 @Component({

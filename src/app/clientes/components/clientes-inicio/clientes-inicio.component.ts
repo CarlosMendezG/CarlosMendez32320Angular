@@ -1,7 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { Cliente } from 'src/app/models/cliente';
+import { ClienteState } from 'src/app/models/cliente.state';
 import { ClientesService } from 'src/app/services/clientes.service';
+import { inicializarClientes } from '../../state/clientes.actions';
 
 @Component({
   selector: 'app-clientes-inicio',
@@ -11,7 +14,8 @@ import { ClientesService } from 'src/app/services/clientes.service';
 export class ClientesInicioComponent implements OnInit, OnDestroy {
 
   constructor(
-    private clientesService: ClientesService
+    private clientesService: ClientesService,
+    private store: Store<ClienteState>
   ) {
     // this.clientesSubscription = clientesService.obtenerClientesBehaviorSubject().subscribe({
     //   next: (clientes: Cliente[]) => {
@@ -60,6 +64,7 @@ export class ClientesInicioComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(inicializarClientes());
     this.cargarClientes();
   }
 

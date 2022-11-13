@@ -1,10 +1,10 @@
-<div class="mb-5" class="menuBotones text-center">
+<div class="mb-5" class="menuBotones text-left" style="background-color: #f7f7f7;">
   <a mat-flat-button routerLink="clientes/list" class="px-5">
     <mat-icon>person</mat-icon>
     <span class="px-1">Clientes</span>
     <span class="yellow-bar" *ngIf="ruta === 'clientes'"></span>
   </a>
-  <a mat-flat-button routerLink="distribuidores" class="px-5">
+  <a mat-flat-button routerLink="distribuidores" class="px-5" *ngIf="esAdmin">
     <mat-icon>group</mat-icon>
     <span class="px-1">Distribuidores</span>
     <span class="yellow-bar" *ngIf="ruta === 'distribuidores'"></span>
@@ -34,5 +34,14 @@
     <mat-icon>summarize</mat-icon>
     <span class="px-1">Tickets</span>
     <span class="yellow-bar" *ngIf="ruta === 'tickets'"></span>
+  </a>
+  <a mat-flat-button routerLink="usuarios/usuarios" class="px-5" *ngIf="esAdmin">
+    <mat-icon>admin_panel_settings</mat-icon>
+    <span class="px-1">Usuarios</span>
+    <span class="yellow-bar" *ngIf="ruta === 'usuarios'"></span>
+  </a>
+  <a mat-flat-button (click)="cerrarSesion()" class="px-5">
+    <mat-icon>logout</mat-icon>
+    <span class="px-1">Cerrar Sesión</span>
   </a>
 </div>

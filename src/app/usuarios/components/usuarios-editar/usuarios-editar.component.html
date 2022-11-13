@@ -1,0 +1,61 @@
+<div class="row">
+    <h1>Usuario</h1>
+</div>
+<form class="px-2" [formGroup]="formularioReactivo" (ngSubmit)="submitForm()">
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="id">Id:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="id" [readonly]="true">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="nombre">Usuario:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="nombre" [readonly]="!editando">
+        </div>
+        <div *ngIf="!patronCorrecto('nombre') && !faltaLongitud('nombre') && esRequerido('nombre')">
+            <small class="text-primary">* el campo es requerido</small>
+        </div>
+        <div *ngIf="!patronCorrecto('nombre') && faltaLongitud('nombre')">
+            <small class="text-primary">* El nombre del usuario debe tener una longitud mínimo de 5</small>
+        </div>
+        <div *ngIf="patronCorrecto('nombre')">
+            <small class="text-primary">* El nombre del usuario debe tener al menos 5 letras</small>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="correo">Correo:</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="correo" [readonly]="!editando">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-2">
+            <label for="tipoUsuario">Tipo de usuario</label>
+        </div>
+        <div class="col-10">
+            <input type="text" formControlName="tipoUsuario" [readonly]="!editando">
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-8" *ngIf="!editando">
+            <button class="btn btn-success" (click)="editando = true; nuevoUsuario = false">Editar datos</button>
+            <button class="btn btn-success" id="btnAgregar" (click)="agregarUsuario()">Agregar usuario</button>
+        </div>
+        <div class="col-8" *ngIf="editando">
+            <button class="btn btn-primary" (click)="cargarDatosOriginales()">Cancelar</button>
+            <button class="btn btn-success" type="submit" [disabled]="!formularioReactivo.valid">Guardar datos</button>
+        </div>
+    </div>
+</form>
+
+<div class="p-3" *ngIf="error">
+    {{error | json}}
+</div>
