@@ -9,8 +9,6 @@ import { MaterialModule } from 'src/app/core/material.module';
 import { ClientesComponent } from './clientes.component';
 
 export class MatDialogMock {
-    // When the component calls this.dialog.open(...) we'll return an object
-    // with an afterClosed method that allows to subscribe to the dialog result observable.
     open() {
         return {
             afterClosed: () => of({ action: true })
@@ -53,7 +51,6 @@ describe('Pruebas unitarias Clientes', () => {
         const form = component.formularioReactivo;
         const campoId = form.controls['id'];
         const campoNombre = form.controls['nombre'];
-        // const campoRfc = form.controls['rfc'];
 
         campoId.setValue('123');
         campoNombre.setValue('Nombre');

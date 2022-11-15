@@ -14,9 +14,6 @@ export class EmployeeIdentityApi {
   private empleadoBehaviorSubject: BehaviorSubject<IEmpleadosListado[]>;
 
   public list(owner: string, company: number, campos: string[]): Observable<IEmpleadosListado[]> {
-    // let url: string = `${apiConfig.url}/${owner}/companies/${company}/employee/list`;
-    // let result = this._httpClient.post<IEmpleadosListado[]>(url, campos);
-    // return result;
     return this.empleadoBehaviorSubject.asObservable();
   }
 

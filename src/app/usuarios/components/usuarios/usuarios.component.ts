@@ -21,6 +21,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./usuarios.component.scss']
 })
 export class UsuariosComponent implements OnInit, OnDestroy {
+  public esAdmin: boolean = false;
   public sesionSubscription!: Subscription;
   public sesion$: Observable<Sesion>;
   public sesion: Sesion = { activa: false, usuario: undefined };
@@ -234,10 +235,12 @@ export class UsuariosComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.esAdmin = false;
     this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
       (sesion: Sesion) => {
         console.log('Sesión cargada');
         this.sesion = sesion;
+        this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
       }, (err: Error) => {
         console.error(err);
         this.router.navigate([`inicio`]);
@@ -254,6 +257,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.usuariosSubscribe) this.usuariosSubscribe.unsubscribe();
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe();
   }
 }
 

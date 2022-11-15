@@ -92,12 +92,6 @@ export class ClientesService {
   }
 
   eliminarCliente(clienteAEliminar: number) {
-    // let index = this.clientes.findIndex(x => x.id == clienteAEliminar);
-    // if (index < 0) {
-    //   // error
-    //   return;
-    // }
-    // this.clientes.splice(index, 1);
 
     this.clientes = this.clientes.filter(x => x.id != clienteAEliminar);
     this.clientesSubject.next(this.clientes);
@@ -117,8 +111,6 @@ export class ClientesService {
     this.clientesSubject.next(this.clientes);
     return cliente;
   }
-
-  // ========================================================================= HTTP
 
   obtenerClientesHttp(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(`${environment.api}${this.urlPrefijo}`, {
@@ -145,13 +137,6 @@ export class ClientesService {
     }).pipe(
       catchError(this.manejarError)
     );
-    // .subscribe(
-    //   (resultado) => {
-    //     console.log(resultado);
-    //     return resultado;
-    //   }
-    // )
-    // return undefined;
   }
 
   agregarClienteHttp(cliente: Cliente): Observable<Cliente> {

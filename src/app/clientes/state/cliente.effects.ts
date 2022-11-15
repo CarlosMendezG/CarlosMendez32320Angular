@@ -15,14 +15,12 @@ export class ClienteEffects {
 
     cargarUsuarios$ = createEffect(
         () => this.actions$.pipe(
-            ofType(loadClientes), // escuchar la acción
-            // tap( data => console.log("effect Tap", data) ),
-            mergeMap( // llamar el servicio según la acción
+            ofType(loadClientes),
+            mergeMap(
                 () => this.clientesServicio.obtenerClientesHttp()
                     .pipe(
-                        // tap( data => console.log("ObtenerClientes desde el Effect", data) ), 
-                        map(clientes => loadClientesSuccess({ clientes })),  // llama la acción de éxito y le pasa los valores
-                        catchError((error: any) => of(loadClientesFailure({ error }))) // llama a la acción de error y pasa el mensaje
+                        map(clientes => loadClientesSuccess({ clientes })),
+                        catchError((error: any) => of(loadClientesFailure({ error })))
                     )
             )
         )

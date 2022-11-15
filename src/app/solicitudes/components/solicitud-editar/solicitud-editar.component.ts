@@ -1,9 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CVFechaT } from 'src/app/core/funciones/fFecha';
+import { Sesion } from 'src/app/models/sesion';
 import { SolicitudInfo } from 'src/app/models/solicitudInfo';
+import { TipoUsuario } from 'src/app/models/usuario';
+import { SesionService } from 'src/app/services/sesion.service';
 import { SolicitudesService } from 'src/app/services/solicitudes.service';
 
 @Component({
@@ -12,7 +16,10 @@ import { SolicitudesService } from 'src/app/services/solicitudes.service';
   styleUrls: ['./solicitud-editar.component.scss']
 })
 export class SolicitudEditarComponent implements OnInit, OnDestroy {
-
+  public esAdmin: boolean = false;
+  public sesionSubscription!: Subscription;
+  public sesion$: Observable<Sesion>;
+  public sesion: Sesion = { activa: false, usuario: undefined };
   public idSolicitud: number = 0;
   public solicitud: SolicitudInfo | undefined;
   public solicitudSubscribe!: Subscription;
@@ -26,6 +33,7 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private solicitudService: SolicitudesService,
+    private sesionServicio: SesionService,
     private route: ActivatedRoute,
     private router: Router
   ) {
@@ -38,6 +46,10 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
       version: new FormControl(''),
       tipoMovimiento: new FormControl(''),
     });
+
+    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
+      map((sesion: Sesion) => this.sesion = sesion)
+    );
   }
 
   private cargarSolicitud() {
@@ -87,6 +99,11 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
           this.solicitudSubscribe.unsubscribe;
         }
       );
+      return;
+    }
+
+    if (!this.esAdmin) {
+      alert('Procedimiento solo para administradores');
       return;
     }
 
@@ -180,6 +197,19 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.esAdmin = false;
+    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
+      (sesion: Sesion) => {
+        console.log('Sesión cargada');
+        this.sesion = sesion;
+        this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
+      }, (err: Error) => {
+        console.error(err);
+      }, () => {
+        this.sesionSubscription.unsubscribe;
+      }
+    );
+
     const routeParams = this.route.snapshot.paramMap;
     this.idSolicitud = Number(routeParams.get('id'));
 
@@ -189,6 +219,7 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.solicitudSubscribe) this.solicitudSubscribe.unsubscribe();
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe();
   }
 
 }

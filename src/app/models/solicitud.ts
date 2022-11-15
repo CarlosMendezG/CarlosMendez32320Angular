@@ -20,7 +20,6 @@ export interface Solicitud {
     pagoFechaTxt: string;
     pagoFecha: Date;
     pagoImporte: number;
-    // pagoImagen: Blob;
     asignadoA: string;
     pagoCfdiAdd: number;
 }

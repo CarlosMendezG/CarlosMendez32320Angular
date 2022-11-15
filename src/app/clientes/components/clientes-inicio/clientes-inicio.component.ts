@@ -17,21 +17,7 @@ export class ClientesInicioComponent implements OnInit, OnDestroy {
     private clientesService: ClientesService,
     private store: Store<ClienteState>
   ) {
-    // this.clientesSubscription = clientesService.obtenerClientesBehaviorSubject().subscribe({
-    //   next: (clientes: Cliente[]) => {
-    //     this.clientes = clientes;
-    //     console.log(`Clientes cargados Observable: ${this.clientes}`);
-    //   },
-    //   error: (error) => {
-    //     console.error(error);
-    //   }
-    // });
-
   }
-
-  // private clientesSubscription: Subscription;
-  // public clientes: Cliente[] = [];
-  // public clientes$: Observable<Cliente[]> = this.clientesService.obtenerClientesBehaviorSubject();
   public clientes$!: Observable<Cliente[]>;
   public clientesSubscribe!: Subscription;
   public filtro: string = "";

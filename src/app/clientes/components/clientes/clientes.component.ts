@@ -1,8 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Cliente } from 'src/app/models/cliente';
+import { Sesion } from 'src/app/models/sesion';
+import { TipoUsuario } from 'src/app/models/usuario';
 import { ClientesService } from 'src/app/services/clientes.service';
+import { SesionService } from 'src/app/services/sesion.service';
 
 @Component({
   selector: 'app-clientes',
@@ -10,7 +14,10 @@ import { ClientesService } from 'src/app/services/clientes.service';
   styleUrls: ['./clientes.component.scss']
 })
 export class ClientesComponent implements OnInit, OnDestroy {
-
+  public esAdmin: boolean = false;
+  public sesionSubscription!: Subscription;
+  public sesion$: Observable<Sesion>;
+  public sesion: Sesion = { activa: false, usuario: undefined };
   public cliente: Cliente | undefined;
   public clienteSubscribe!: Subscription;
   public nuevoCliente: boolean = false;
@@ -22,6 +29,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
+    private sesionServicio: SesionService,
     private clientesService: ClientesService
   ) {
     this.formularioReactivo = this.formBuilder.group({
@@ -29,6 +37,10 @@ export class ClientesComponent implements OnInit, OnDestroy {
       nombre: new FormControl('', [Validators.required, Validators.minLength(5), Validators.pattern('[a-zA-Z ]*')]),
       rfc: new FormControl('', [Validators.required, Validators.minLength(13), Validators.pattern(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)])
     });
+
+    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
+      map((sesion: Sesion) => this.sesion = sesion)
+    );
   }
 
   private cargarCliente() {
@@ -65,8 +77,11 @@ export class ClientesComponent implements OnInit, OnDestroy {
       );
       return;
     }
-    // let index = this.clientes.findIndex(x => x.id == cliente.id);
-    // cliente.imagen = `../../../assets/imagenes/cliente${cliente.id.toString().padStart(2, "0")}.jpg`;;
+
+    if (!this.esAdmin) {
+      alert('Procedimiento solo para administradores');
+      return;
+    }
 
     this.clienteSubscribe = this.clientesService.modificarClienteHttp(this.cliente).subscribe(
       (resultado: Cliente) => {
@@ -147,8 +162,6 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   cargarDatosOriginales() {
     this.formularioReactivo.reset();
-    // this.cliente = this.clientesService.obtenerClienteHttp(0);
-
     this.clienteSubscribe = this.clientesService.obtenerClienteHttp(0).subscribe(
       (resultado: Cliente) => {
         this.cliente = resultado;
@@ -187,11 +200,25 @@ export class ClientesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.esAdmin = false;
+    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
+      (sesion: Sesion) => {
+        console.log('Sesión cargada');
+        this.sesion = sesion;
+        this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
+      }, (err: Error) => {
+        console.error(err);
+      }, () => {
+        this.sesionSubscription.unsubscribe;
+      }
+    );
+
     this.cargarDatosOriginales();
     this.nuevoCliente = false;
   }
 
   ngOnDestroy(): void {
     if (this.clienteSubscribe) this.clienteSubscribe.unsubscribe();
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe();
   }
 }

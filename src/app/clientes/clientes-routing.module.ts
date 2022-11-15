@@ -12,11 +12,9 @@ const routes: Routes = [
   {
     path: '', component: ClientesInicioComponent, children: [
       { path: 'cliente', component: ClientesComponent, canActivate: [AutenticacionGuard, AdminGuard] },
-      // { path: 'cliente/:id', component: ClientesComponent },
       { path: 'cards', component: ClientesCardsComponent },
       { path: 'list', component: ClientesListComponent },
-      { path: 'detalle', component: ClientesDetalleComponent },
-      // { path: 'detalle/:id', component: ClientesDetalleComponent }
+      { path: 'detalle', component: ClientesDetalleComponent }
     ]
   }
 ];

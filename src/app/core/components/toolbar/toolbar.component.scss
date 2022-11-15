@@ -47,10 +47,6 @@ button.mat-menu-item:hover {
   color: red !important;
 }
 
-// .mat-menu-item .mat-icon {
-//   color: navy;
-// }
-
 .mat-menu-item:hover .mat-icon {
   color: white !important;
 }
@@ -74,6 +70,7 @@ button.mat-menu-item:hover {
   color: navy;
   border: 2px solid #f0f0f0;
 }
+
 .menuBotones a:hover {
   background-color: #f0f0f0;
   color: black;
@@ -82,7 +79,3 @@ button.mat-menu-item:hover {
 .blue {
   color: navy;
 }
-
-// .mat-icon {
-//   color: navy !important;
-// }

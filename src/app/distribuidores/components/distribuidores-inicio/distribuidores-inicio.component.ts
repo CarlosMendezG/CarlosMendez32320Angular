@@ -19,7 +19,6 @@ export class DistribuidoresInicioComponent implements OnInit {
   constructor(
     private readonly _activatedRoute: ActivatedRoute,
     private readonly _api: DistribuidoresService,
-    // private readonly _homeService: HomeService
   ) {
 
   }
@@ -29,14 +28,8 @@ export class DistribuidoresInicioComponent implements OnInit {
     idDepartamento: 0, departamento: '', idHorario: '', horario: '', datosValidosCFDI40: '', valorValidosCFDI40: 0
   }];
   public tieneDepartamentos: boolean = false;
-  // public departments$: Observable<Department[]>;
-  // public departmentsLoading = false;
-  // public departmentsInput$ = new Subject<string>();
   public terminoCarga: boolean = false;
   public camposAdd: string[] = ['departamento', 'horario'];
-
-  // @ViewChild('newEmployee', { static: true })
-  // public newEmployee: NewEmployeeComponent;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -67,25 +60,6 @@ export class DistribuidoresInicioComponent implements OnInit {
     router.navigate([owner, 'companies', company, 'employee', employee.id, 'data']);
   }
 
-  // private loadDepartments() {
-  //   this.departments$ = concat(
-  //     this._api.companies.departments.browse(this.ownerId, this.companyId, false).next(), // default items
-  //     this.departmentsInput$.pipe(
-  //       debounceTime(500),
-  //       distinctUntilChanged(),
-  //       tap(() => this.departmentsLoading = true),
-  //       switchMap(term => {
-  //         const browser = this._api.companies.departments.browse(this.ownerId, this.companyId, false);
-  //         browser.queryParams['name'] = { isSearchable: false, value: term };
-  //         return browser.next().pipe(
-  //           catchError(() => of([])), // empty list on error
-  //           tap(() => this.departmentsLoading = false)
-  //         )
-  //       })
-  //     )
-  //   );
-  // }
-
   public validarDatosCfdi40() {
 
   }
@@ -110,8 +84,6 @@ export class DistribuidoresInicioComponent implements OnInit {
       (resultado: IEmpleadosListado[]) => {
         this.empleados = <IEmpleadosListado[]>resultado;
         this.dataSource = new MatTableDataSource<IEmpleadosListado>(this.empleados);
-        // this.dataSource.paginator = this.paginator;
-        // this.dataSource.sort = this.sort;
         console.log(this.empleados);
         this.terminoCarga = true;
       }, (err: Error) => {

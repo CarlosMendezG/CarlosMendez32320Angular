@@ -54,22 +54,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       return;
     }
     this._router.navigate(['inicio']);
-
-    // const logIn = this.dialog.open(LoginComponent, {
-    //   data: '',
-    //   width: '350px'
-    // });
-
-    // logIn.afterClosed().subscribe(result => {
-    //   console.log(`The dialog was closed ${result}`);
-    //   // this.usuario = this.usuarioServicio.seleccionarUsuarioActual(result);
-    // });
   }
-
-  // public obtenerEmpresa(): String {
-  //   if (!this.sesion || !this.sesion.usuario || !this.sesion.usuario.nombre) return 'Empresa';
-  //   return this.sesion.usuario.nombre;
-  // }
 
   private obtenerRuta(url: string) {
     if (!url) {

@@ -20,20 +20,7 @@ export class ClientesMenuComponent implements OnInit {
           return;
         };
         if (event.url.indexOf("/clientes/") < 0) return;
-        //if (event.url.substring(1, 'clientes/'.length) != 'clientes/') return;
         this.seleccionarMenu(event.url);
-      }
-
-      if (event instanceof NavigationEnd) {
-        // Hide loading indicator
-        // console.log('NavigationEnd');
-      }
-
-      if (event instanceof NavigationError) {
-        // Hide loading indicator
-
-        // Present error to user
-        // console.log(event.error);
       }
     });
   }

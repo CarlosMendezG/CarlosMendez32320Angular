@@ -1,10 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CVFechaT } from 'src/app/core/funciones/fFecha';
 import { newGuid } from 'src/app/core/funciones/fTexto';
+import { Sesion } from 'src/app/models/sesion';
 import { TipoUsuario, Usuario } from 'src/app/models/usuario';
+import { SesionService } from 'src/app/services/sesion.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
 
 @Component({
@@ -13,7 +16,10 @@ import { UsuariosService } from 'src/app/services/usuarios.service';
   styleUrls: ['./usuarios-editar.component.scss']
 })
 export class UsuariosEditarComponent implements OnInit, OnDestroy {
-
+  public esAdmin: boolean = false;
+  public sesionSubscription!: Subscription;
+  public sesion$: Observable<Sesion>;
+  public sesion: Sesion = { activa: false, usuario: undefined };
   public idUsuario: string | undefined = undefined;
   public usuario: Usuario | undefined;
   public usuarioSubscribe!: Subscription;
@@ -27,6 +33,7 @@ export class UsuariosEditarComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private usuariosService: UsuariosService,
+    private sesionServicio: SesionService,
     private route: ActivatedRoute,
     private router: Router
   ) {
@@ -36,6 +43,10 @@ export class UsuariosEditarComponent implements OnInit, OnDestroy {
       correo: new FormControl(''),
       tipoUsuario: new FormControl('')
     });
+
+    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
+      map((sesion: Sesion) => this.sesion = sesion)
+    );
   }
 
   private cargarUsuario() {
@@ -76,6 +87,11 @@ export class UsuariosEditarComponent implements OnInit, OnDestroy {
           this.usuarioSubscribe.unsubscribe;
         }
       );
+      return;
+    }
+
+    if (!this.esAdmin) {
+      alert('Procedimiento solo para administradores');
       return;
     }
 
@@ -159,6 +175,19 @@ export class UsuariosEditarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.esAdmin = false;
+    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
+      (sesion: Sesion) => {
+        console.log('Sesión cargada');
+        this.sesion = sesion;
+        this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
+      }, (err: Error) => {
+        console.error(err);
+      }, () => {
+        this.sesionSubscription.unsubscribe;
+      }
+    );
+
     const routeParams = this.route.snapshot.paramMap;
     this.idUsuario = routeParams.get('id') || undefined;
 
@@ -168,6 +197,7 @@ export class UsuariosEditarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.usuarioSubscribe) this.usuarioSubscribe.unsubscribe();
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe();
   }
 
 }

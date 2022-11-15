@@ -1,14 +1,17 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cliente } from 'src/app/models/cliente';
 import { ClienteState } from 'src/app/models/cliente.state';
+import { Sesion } from 'src/app/models/sesion';
 import { Estados } from 'src/app/models/states';
+import { TipoUsuario } from 'src/app/models/usuario';
 import { ClientesService } from 'src/app/services/clientes.service';
-import { inicializarClientes, loadClientes, loadClientesEstado, loadClientesFailure, loadClientesSuccess } from '../../state/clientes.actions';
-import { selectStateCliente, selectStateCargado, selectStateEstado } from '../../state/clientes.selectors';
+import { SesionService } from 'src/app/services/sesion.service';
+import { inicializarClientes, loadClientesFailure, loadClientesSuccess } from '../../state/clientes.actions';
+import { selectStateCliente, selectStateEstado } from '../../state/clientes.selectors';
 
 @Component({
   selector: 'app-clientes-cards',
@@ -16,7 +19,10 @@ import { selectStateCliente, selectStateCargado, selectStateEstado } from '../..
   styleUrls: ['./clientes-cards.component.scss']
 })
 export class ClientesCardsComponent implements OnInit, OnDestroy {
-
+  public esAdmin: boolean = false;
+  public sesionSubscription!: Subscription;
+  public sesion$: Observable<Sesion>;
+  public sesion: Sesion = { activa: false, usuario: undefined };
   public estadoCliente: Estados = Estados.sinInicializar;
   public clientes$!: Observable<Cliente[]>;
   public clientesSubscribe!: Subscription;
@@ -26,11 +32,13 @@ export class ClientesCardsComponent implements OnInit, OnDestroy {
 
   constructor(
     private clientesService: ClientesService,
+    private sesionServicio: SesionService,
     private router: Router,
     private store: Store<ClienteState>
   ) {
-    // this.clientes$ = this.clientesService.obtenerClientesBehaviorSubject();
-    // console.log(this.clientes$);
+    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
+      map((sesion: Sesion) => this.sesion = sesion)
+    );
   }
 
   @Output()
@@ -60,6 +68,10 @@ export class ClientesCardsComponent implements OnInit, OnDestroy {
   }
 
   public eliminarClienteClick(clienteId: number) {
+    if (!this.esAdmin) {
+      alert('Procedimiento solo para administradores');
+      return;
+    }
     this.store.dispatch(inicializarClientes());
     this.clientesSubscribe = this.clientesService.eliminarClienteHttp(clienteId).subscribe(
       (resultado: Cliente) => {
@@ -98,6 +110,19 @@ export class ClientesCardsComponent implements OnInit, OnDestroy {
 
   private href: string = "";
   ngOnInit(): void {
+    this.esAdmin = false;
+    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
+      (sesion: Sesion) => {
+        console.log('Sesión cargada');
+        this.sesion = sesion;
+        this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
+      }, (err: Error) => {
+        console.error(err);
+      }, () => {
+        this.sesionSubscription.unsubscribe;
+      }
+    );
+
     this.clientes$ = this.store.select(selectStateCliente);
     this.store.select(selectStateEstado).pipe(
       map((estado: Estados) => {
@@ -121,6 +146,7 @@ export class ClientesCardsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.clientesSubscribe) this.clientesSubscribe.unsubscribe();
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe();
   }
 
 }

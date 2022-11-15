@@ -60,16 +60,6 @@ export class MenuInicialComponent implements OnInit, OnDestroy {
       return;
     }
     this._router.navigate(['inicio']);
-
-    // const logIn = this.dialog.open(LoginComponent, {
-    //   data: '',
-    //   width: '350px'
-    // });
-
-    // logIn.afterClosed().subscribe(result => {
-    //   console.log(`The dialog was closed ${result}`);
-    //   // this.usuario = this.usuarioServicio.seleccionarUsuarioActual(result);
-    // });
   }
 
 

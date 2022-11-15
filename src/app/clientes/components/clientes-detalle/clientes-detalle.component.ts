@@ -19,8 +19,6 @@ export class ClientesDetalleComponent implements OnInit, OnDestroy {
   public error: Error | undefined;
 
   private cargarDatosOriginales() {
-    // this.cliente = this.clientesService.obtenerClienteHttp(0);
-
     this.clienteSubscribe = this.clientesService.obtenerClienteHttp(0).subscribe(
       (resultado: Cliente) => {
         this.cliente = resultado;

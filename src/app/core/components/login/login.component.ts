@@ -8,7 +8,6 @@ import { Subscription } from 'rxjs';
 import { SesionService } from 'src/app/services/sesion.service';
 import { Sesion } from 'src/app/models/sesion';
 
-/** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const isSubmitted = form && form.submitted;
@@ -43,7 +42,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     );
   }
 
-  public selected: FormControl = new FormControl('valid', [Validators.required]); // , Validators.pattern('valid')
+  public selected: FormControl = new FormControl('valid', [Validators.required]);
   public contrasenna: FormControl = new FormControl('123', [Validators.required]);
   public formularioReactivo: FormGroup = this.formBuilder.group(
     { selected: this.selected },

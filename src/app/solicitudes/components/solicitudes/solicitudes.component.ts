@@ -24,6 +24,7 @@ import { CVFechaT } from 'src/app/core/funciones/fFecha';
   styleUrls: ['./solicitudes.component.scss'],
 })
 export class SolicitudesComponent implements OnInit, OnDestroy {
+  public esAdmin: boolean = false;
   public sesionSubscription!: Subscription;
   public sesion$: Observable<Sesion>;
   public sesion: Sesion = { activa: false, usuario: undefined };
@@ -259,6 +260,11 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   }
 
   public eliminarSolicitud(solicitudAEliminar: number) {
+    if (!this.esAdmin) {
+      alert('Procedimiento solo para administradores');
+      return;
+    }
+
     let indexSolicitud: number = this.solicitudes.findIndex(
       (x) => x.id == solicitudAEliminar
     );
@@ -275,30 +281,15 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       width: '350px',
     });
 
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log(`The dialog was closed ${result}`);
-    //   if (clienteActual.cliente != result) return;
-    //   this.solicitudesSubscribe = this.solicitudesService.eliminarSolicitudHttp(solicitudAEliminar).subscribe(
-    //     (resultado: Solicitud) => {
-    //       this.cargarSolicitudes();
-    //     }, (err: Error) => {
-    //       console.error(err);
-    //       this.error = err;
-    //       setTimeout(() => {
-    //         this.error = undefined;
-    //       }, 15000);
-    //     }, () => {
-    //       this.solicitudesSubscribe.unsubscribe;
-    //     }
-    //   );
-    // });
   }
 
   ngOnInit(): void {
+    this.esAdmin = false;
     this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
       (sesion: Sesion) => {
         console.log('Sesión cargada');
         this.sesion = sesion;
+        this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
       }, (err: Error) => {
         console.error(err);
       }, () => {
@@ -314,6 +305,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.solicitudSubscribe) this.solicitudSubscribe.unsubscribe();
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe();
   }
 }
 

@@ -5,14 +5,17 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subscription, Observable, of, from, interval } from 'rxjs';
-import { map, filter, mergeMap } from 'rxjs/operators';
+import { Subscription, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { DialogComponent } from 'src/app/core/components/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/core/components/error/error.component';
 import { Cliente } from 'src/app/models/cliente';
 import { ClienteState } from 'src/app/models/cliente.state';
+import { Sesion } from 'src/app/models/sesion';
 import { Estados } from 'src/app/models/states';
+import { TipoUsuario } from 'src/app/models/usuario';
 import { ClientesService } from 'src/app/services/clientes.service';
+import { SesionService } from 'src/app/services/sesion.service';
 import { inicializarClientes, loadClientes, loadClientesFailure, loadClientesSuccess } from '../../state/clientes.actions';
 import { selectStateCliente, selectStateEstado } from '../../state/clientes.selectors';
 
@@ -22,7 +25,10 @@ import { selectStateCliente, selectStateEstado } from '../../state/clientes.sele
   styleUrls: ['./clientes-list.component.scss']
 })
 export class ClientesListComponent implements OnInit, OnDestroy {
-
+  public esAdmin: boolean = false;
+  public sesionSubscription!: Subscription;
+  public sesion$: Observable<Sesion>;
+  public sesion: Sesion = { activa: false, usuario: undefined };
   public estadoCliente: Estados = Estados.sinInicializar;
   public clientes$!: Observable<Cliente[]>;
   public cargando$!: Observable<boolean>;
@@ -48,40 +54,16 @@ export class ClientesListComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private clientesService: ClientesService,
+    private sesionServicio: SesionService,
     private router: Router,
     private store: Store<ClienteState>
   ) {
-    // clientesService.obtenerClientesAsync().then(
-    //   (clientes: Cliente[]) => {
-    //     this.clientes = clientes;
-    //     console.log(`Clientes cargados Promesa: ${this.clientes}`);
-    //     // console.log(`Clientes originales por Input: ${this.clientesOrigen}`);
-    //   }).catch((error: { codigo: number, mensaje: string }) => {
-    //     console.log(`Error: código ${error.codigo} -> ${error.mensaje}. Clientes: ${this.clientes}`);
-    //     // console.log(`Clientes originales por Input: ${this.clientesOrigen}`);
-    //   });
-
-    // this.clientesSubscription = clientesService.obtenerClientesObservable().subscribe({
-    //   next: (clientes: Cliente[]) => {
-    //     this.clientes = clientes;
-    //     console.log(`Clientes cargados Observable: ${this.clientes}`);
-    //   },
-    //   error: (error) => {
-    //     console.error(error);
-    //   }
-    // });
-
+    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
+      map((sesion: Sesion) => this.sesion = sesion)
+    );
   }
 
-
-
-
   public editarCliente(clienteId: number) {
-    // if (this.href == '/clientes') {
-    //   console.log(`Solicitud de modificación del cliente por output: ${clienteId}`);
-    //   this.clienteEditar.emit(clienteId);
-    //   return;
-    // }
     console.log(`Solicitud de modificación del cliente por ruta: ${clienteId}`);
     this.clientesService.seleccionarClienteActual(clienteId);
     this.router.navigate(['clientes', 'cliente']);
@@ -90,19 +72,16 @@ export class ClientesListComponent implements OnInit, OnDestroy {
   @Output()
   public detalleClientes = new EventEmitter<number>();
   public detalleCliente(clienteId: number) {
-    // if (this.href == '/clientes') {
-    //   console.log(`Solicitud de detalle del cliente por output: ${clienteId}`);
-    //   this.detalleClientes.emit(clienteId);
-    //   return;
-    // }
     console.log(`Solicitud de detalle del cliente por ruta: ${clienteId}`);
     this.clientesService.seleccionarClienteActual(clienteId);
     this.router.navigate(['clientes', 'detalle']);
   }
 
-  // @Output()
-  // public eliminarCliente = new EventEmitter<number>();
   public eliminarClienteClick(clienteAEliminar: number) {
+    if (!this.esAdmin) {
+      alert('Procedimiento solo para administradores');
+      return;
+    }
     let indexCliente: number = this.clientes.findIndex(x => x.id == clienteAEliminar);
     if (indexCliente < 0) {
       this.dialog.open(ErrorComponent, {
@@ -122,8 +101,8 @@ export class ClientesListComponent implements OnInit, OnDestroy {
       if (clienteActual.cliente != result) return;
       this.clientesSubscribe = this.clientesService.eliminarClienteHttp(clienteAEliminar).subscribe(
         (resultado: Cliente) => {
-          // this.store.dispatch(inicializarClientes());
-          // this.cargarClientes();
+          this.store.dispatch(inicializarClientes());
+          this.cargarClientes();
           console.log("datos actualizados");
         }, (err: Error) => {
           console.error(err);
@@ -146,10 +125,6 @@ export class ClientesListComponent implements OnInit, OnDestroy {
       this.dataSource.paginator.firstPage();
     }
     return;
-
-    // this.dataSource.filterPredicate = function (cliente: Clientes, filtro: string) {
-    //   return cliente.nombre.toLocaleLowerCase().includes(filtro.toLocaleLowerCase());
-    // };
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -169,7 +144,7 @@ export class ClientesListComponent implements OnInit, OnDestroy {
         if (estado == Estados.datosCargados) {
           if (this.inicializado) return;
         } else {
-          this.store.dispatch(loadClientes()); // se envía el mensaje de que se están cargando los datos
+          this.store.dispatch(loadClientes());
           this.clientes$ = this.clientesService.obtenerClientesHttp();
         }
         this.inicializado = true;
@@ -193,8 +168,18 @@ export class ClientesListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.clientes = this.clientesOrigen;
-    // this.dataSource = new MatTableDataSource<Cliente>(this.clientes);
+    this.esAdmin = false;
+    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
+      (sesion: Sesion) => {
+        console.log('Sesión cargada');
+        this.sesion = sesion;
+        this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
+      }, (err: Error) => {
+        console.error(err);
+      }, () => {
+        this.sesionSubscription.unsubscribe;
+      }
+    );
     this.clickedRows = new Set<Cliente>();
 
     this.href = this.router.url;
@@ -202,46 +187,6 @@ export class ClientesListComponent implements OnInit, OnDestroy {
     this.inicializado = false;
     this.clientes$ = this.store.select(selectStateCliente);
     this.cargarClientes();
-
-    // console.log(this.router.url);
-
-    // of(this.clientes).subscribe((clientes) => {
-    //   console.log('Desde el of', clientes);
-    // });
-
-    // from(this.clientes).subscribe((clientes) => {
-    //   console.log('Desde el from', clientes);
-    // });
-
-    // // pipe  es para todos los observables
-    // of(this.clientes).pipe(
-    //   // filter((clientes: Clientes[]) => clientes.nombre == 'Carlos')
-    //   map((clientes: Cliente[]) => clientes.filter((cliente: Cliente) => cliente.cliente == 'Carlos'))
-    // ).subscribe((clientes) => {
-    //   console.log('Desde el of con filtro', clientes);
-    // });
-
-    // from(this.clientes).pipe(
-    //   filter((cliente: Cliente) => cliente.cliente == 'Carlos')
-    // ).subscribe((clientes) => {
-    //   console.log('Desde el from con filtro', clientes);
-    // });
-
-    // of(this.clientes).pipe(
-    //   mergeMap(
-    //     (clientes: Cliente[]) => interval(1000).pipe(map(i => i + clientes[i].cliente))
-    //   )
-    // ).subscribe((clientes) => {
-    //   console.log('Desde el of con mergeMap', clientes);
-    // });
-
-    // this.merge$ = of(['a', 'b', 'c', 'd']).pipe(
-    //   mergeMap(
-    //     letras => interval(2000).pipe(
-    //       map((i) => i + letras[i])
-    //     )
-    //   )
-    // );
   }
 
   ngAfterViewInit() {
@@ -251,7 +196,7 @@ export class ClientesListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.clientesSubscribe) this.clientesSubscribe.unsubscribe();
-    // this.merge$.unsubscribe();
+    if (this.sesionSubscription) this.sesionSubscription.unsubscribe();
   }
 
 }
