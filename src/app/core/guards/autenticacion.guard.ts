@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanDeactivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Sesion } from 'src/app/models/sesion';
-import { SesionService } from 'src/app/services/sesion.service';
+import { Sesión } from 'src/app/models/sesión';
+import { SesiónService } from 'src/app/services/sesión.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,23 +11,21 @@ import { SesionService } from 'src/app/services/sesion.service';
 export class AutenticacionGuard implements CanActivate, CanActivateChild, CanDeactivate<unknown>, CanLoad {
 
   constructor(
-    private sesion: SesionService,
+    private sesion: SesiónService,
     private router: Router
   ) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.sesion.obtenerSesion().pipe(
-      map((sesion: Sesion) => {
+    return this.sesion.obtenerSesión().pipe(
+      map((sesion: Sesión) => {
         if (sesion.activa) {
           return true;
         } else {
           if (this.router.url != '/autenticacion/login') {
-            console.log(`Redirigiendo a: autenticacion/login desde ${this.router.url}`);
             this.router.navigate(['autenticacion/login']);
           } else {
-            console.log(`Redirigiendo a: autenticacion/nuevo desde ${this.router.url}`);
             this.router.navigate(['autenticacion/nuevo']);
           }
 

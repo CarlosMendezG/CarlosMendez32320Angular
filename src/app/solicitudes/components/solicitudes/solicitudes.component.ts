@@ -4,7 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { defer, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { DialogComponent } from 'src/app/core/components/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/core/components/error/error.component';
 import { SolicitudInfo } from 'src/app/models/solicitudInfo';
@@ -12,9 +12,9 @@ import { $tipoMovimiento } from 'src/app/models/tipoMovimiento';
 import { $tipoPago } from 'src/app/models/tipoPago';
 import { SolicitudesService } from 'src/app/services/solicitudes.service';
 import { environment } from 'src/environments/environment';
-import { map, filter } from 'rxjs/operators';
-import { Sesion } from 'src/app/models/sesion';
-import { SesionService } from 'src/app/services/sesion.service';
+import { map } from 'rxjs/operators';
+import { Sesión } from 'src/app/models/sesión';
+import { SesiónService } from 'src/app/services/sesión.service';
 import { TipoUsuario } from 'src/app/models/usuario';
 import { CVFechaT } from 'src/app/core/funciones/fFecha';
 
@@ -26,8 +26,8 @@ import { CVFechaT } from 'src/app/core/funciones/fFecha';
 export class SolicitudesComponent implements OnInit, OnDestroy {
   public esAdmin: boolean = false;
   public sesionSubscription!: Subscription;
-  public sesion$: Observable<Sesion>;
-  public sesion: Sesion = { activa: false, usuario: undefined };
+  public sesion$: Observable<Sesión>;
+  public sesion: Sesión = { activa: false, usuario: undefined };
   public solicitudes: SolicitudInfo[] = [];
   public solicitudesOrigen: SolicitudInfo[] = [];
   public solicitudes$!: Observable<SolicitudInfo[]>;
@@ -71,12 +71,12 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
 
   constructor(
     private solicitudesServicio: SolicitudesService,
-    private sesionServicio: SesionService,
+    private sesionServicio: SesiónService,
     private dialog: MatDialog,
     private router: Router
   ) {
-    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
-      map((sesion: Sesion) => this.sesion = sesion)
+    this.sesion$ = this.sesionServicio.obtenerSesión().pipe(
+      map((sesion: Sesión) => this.sesion = sesion)
     );
   }
 
@@ -280,18 +280,16 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       data: clienteActual,
       width: '350px',
     });
-
   }
 
   ngOnInit(): void {
     this.esAdmin = false;
-    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
-      (sesion: Sesion) => {
-        console.log('Sesión cargada');
+    this.sesionSubscription = this.sesionServicio.obtenerSesión().subscribe(
+      (sesion: Sesión) => {
         this.sesion = sesion;
         this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
       }, (err: Error) => {
-        console.error(err);
+        
       }, () => {
         this.sesionSubscription.unsubscribe;
       }

@@ -9,17 +9,11 @@ import { Usuario } from '../models/usuario';
   providedIn: 'root'
 })
 export class UsuariosService {
-
-  // private usuarios: Usuario[] = [];
-  // private usuarioActivo: string | undefined = undefined;
-  // private usuarios$: Observable<Usuario[]>;  // $ => Observable  
-  // private usuarios$$: BehaviorSubject<Usuario[]>;
   private urlPrefijo: string = "/Usuarios";
 
   constructor(
     private http: HttpClient
-  ) {
-  }
+  ) { }
 
   obtenerUsuariosHttp(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(`${environment.api}${this.urlPrefijo}`, {
@@ -69,9 +63,9 @@ export class UsuariosService {
 
   private manejarError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
-      console.warn('Error del lado del cliente', error.error.message);
+      
     } else {
-      console.warn('Error del lado del servidor', error.error.message);
+      
     }
 
     return throwError(() => new Error('Error en la comunicación HTTP'));

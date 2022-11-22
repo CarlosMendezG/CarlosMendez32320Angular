@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Event, RouterEvent, Router } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
-import { Subscription, Observable } from 'rxjs';
-import { Sesion } from 'src/app/models/sesion';
-import { SesionService } from 'src/app/services/sesion.service';
+import { filter } from 'rxjs/operators';
+import { Sesión } from 'src/app/models/sesión';
 import { TipoUsuario } from 'src/app/models/usuario';
 import { environment } from 'src/environments/environment';
+import { Store } from '@ngrx/store';
+import { asignarSesiónActiva, cargarSesión } from '../../state/sesión.actions';
+import { selectSesiónActiva } from '../../state/sesion.selectors';
 
 @Component({
   selector: 'app-menu-inicial',
@@ -13,21 +14,16 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./menu-inicial.component.scss']
 })
 export class MenuInicialComponent implements OnInit, OnDestroy {
-
-  public sesionSubscription!: Subscription;
-  public sesion$: Observable<Sesion>;
-  public sesion: Sesion = { activa: false, usuario: undefined };
+  public sesion!: Sesión;
   public esAdmin: boolean = false;
   public esCurso: boolean = false;
   public ruta: string = "inicio";
 
   constructor(
-    private sesionService: SesionService,
+    private storeSesión: Store<Sesión>,
     private readonly _router: Router
   ) {
-    this.sesion$ = this.sesionService.obtenerSesion().pipe(
-      map((sesion: Sesion) => this.sesion = sesion)
-    );
+    this.storeSesión.dispatch(cargarSesión());
 
     _router.events.pipe(
       filter((e: Event): e is RouterEvent => e instanceof RouterEvent)
@@ -50,37 +46,29 @@ export class MenuInicialComponent implements OnInit, OnDestroy {
   }
 
   public cerrarSesion() {
-    let sesion: Sesion = {
-      activa: false,
-      usuario: undefined
-    }
-    this.sesionService.ponerSesion(sesion);
-    if (this.ruta == "inicio") {
-      this._router.navigate(['autenticacion/login']);
-      return;
-    }
-    this._router.navigate(['inicio']);
+    this.sesion.activa = false;
+    this.sesion.usuario = undefined;
+    this.esAdmin = false;
+    this.storeSesión.dispatch(asignarSesiónActiva( { sesión: this.sesion }));    
   }
 
 
   ngOnInit(): void {
     this.esCurso = environment.curso;
     this.obtenerRuta(this._router.url);
-    this.sesionSubscription = this.sesionService.obtenerSesion().subscribe(
-      (sesion: Sesion) => {
-        console.log('Sesión cargada');
-        this.sesion = sesion;
-        this.esAdmin = sesion.usuario?.tipoUsuario == TipoUsuario.administrador || sesion.usuario?.tipoUsuario == TipoUsuario.top;
-      }, (err: Error) => {
-        console.error(err);
-      }, () => {
-        this.sesionSubscription.unsubscribe;
+    this.storeSesión.select(selectSesiónActiva).subscribe((sesión: Sesión) => {
+      this.sesion = sesión;
+      if (!sesión.activa || !sesión.usuario) {
+        this.esAdmin = false;
+        this._router.navigate(['autenticacion/login']);
+        return;
       }
-    );
+      this.esAdmin = this.sesion.usuario != undefined && (this.sesion.usuario.tipoUsuario == TipoUsuario.administrador || this.sesion.usuario.tipoUsuario == TipoUsuario.top);
+      this._router.navigate(['inicio']);
+    });
   }
 
-  ngOnDestroy(): void {
-    if (this.sesionSubscription) this.sesionSubscription.unsubscribe;
+  ngOnDestroy(): void {    
   }
 
 }

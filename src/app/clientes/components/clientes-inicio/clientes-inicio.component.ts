@@ -4,7 +4,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Cliente } from 'src/app/models/cliente';
 import { ClienteState } from 'src/app/models/cliente.state';
 import { ClientesService } from 'src/app/services/clientes.service';
-import { inicializarClientes } from '../../state/clientes.actions';
+import { clientesInicializar } from '../../state/clientes.actions';
 
 @Component({
   selector: 'app-clientes-inicio',
@@ -15,22 +15,20 @@ export class ClientesInicioComponent implements OnInit, OnDestroy {
 
   constructor(
     private clientesService: ClientesService,
-    private store: Store<ClienteState>
-  ) {
-  }
+    private storeClientes: Store<ClienteState>    
+  ) { }
+
   public clientes$!: Observable<Cliente[]>;
   public clientesSubscribe!: Subscription;
   public filtro: string = "";
   public error: Error | undefined;
 
   public editarCliente(clienteActual: number) {
-    console.log(`Editando cliente: ${clienteActual}`);
     this.clientesService.seleccionarClienteActual(clienteActual);
     this.menuSeleccionadoCliente = "Clientes";
   }
 
   public detalleClientes(clienteActual: number) {
-    console.log(`Detalle cliente: ${clienteActual}`);
     this.clientesService.seleccionarClienteActual(clienteActual);
     this.menuSeleccionadoCliente = "Detalle";
   }
@@ -50,7 +48,7 @@ export class ClientesInicioComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(inicializarClientes());
+    this.storeClientes.dispatch(clientesInicializar());
     this.cargarClientes();
   }
 

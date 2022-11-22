@@ -10,9 +10,9 @@ import { Cliente } from '../models/cliente';
 })
 export class ClientesService {
 
-  private clientes: Cliente[] = [];   // --> API 
-  private clienteActivo: number = 0;  // --> usuario activo
-  private clientes$: Observable<Cliente[]>;  // $ => Observable  
+  private clientes: Cliente[] = [];
+  private clienteActivo: number = 0;
+  private clientes$: Observable<Cliente[]>;
   private clientesSubject: BehaviorSubject<Cliente[]>;
   private urlPrefijo: string = "/Clientes";
 
@@ -44,19 +44,16 @@ export class ClientesService {
     return this.clientes[index];
   }
 
-  seleccionarClienteActual(clienteActual: number) { // : Cliente | undefined
+  seleccionarClienteActual(clienteActual: number) {
     if (clienteActual == 0) {
       this.clienteActivo = clienteActual;
-      return; // undefined;
+      return;
     }
     if (this.clientes.length < 1 || clienteActual <= 0) {
       this.clienteActivo = 0;
-      return; // undefined;
-    }
-    // let index = this.clientes.findIndex(x => x.id == clienteActual);
-    // if (index < 0) return undefined;
-    this.clienteActivo = clienteActual;
-    // return this.clientes[index];
+      return;
+    }    
+    this.clienteActivo = clienteActual;    
   }
 
   obtenerClientesAsync(): Promise<Cliente[]> {
@@ -91,20 +88,17 @@ export class ClientesService {
     return cliente;
   }
 
-  eliminarCliente(clienteAEliminar: number) {
-
+  eliminarCliente(clienteAEliminar: number) {        
     this.clientes = this.clientes.filter(x => x.id != clienteAEliminar);
     this.clientesSubject.next(this.clientes);
   }
 
   modificarCliente(cliente: Cliente): Cliente | undefined {
     if (!cliente) {
-      // error
       return undefined;
     }
     let index = this.clientes.findIndex(x => x.id == cliente.id);
     if (index < 0) {
-      // error
       return undefined;
     }
     this.clientes[index] = cliente;
@@ -164,9 +158,9 @@ export class ClientesService {
 
   private manejarError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
-      console.warn('Error del lado del cliente', error.error.message);
+      
     } else {
-      console.warn('Error del lado del servidor', error.error.message);
+      
     }
 
     return throwError(() => new Error('Error en la comunicación HTTP'));

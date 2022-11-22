@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { NavigationEnd, NavigationError, NavigationStart, Router, Event } from '@angular/router';
+import { NavigationStart, Router, Event } from '@angular/router';
 
 @Component({
   selector: 'app-clientes-menu',
@@ -12,8 +12,7 @@ export class ClientesMenuComponent implements OnInit {
     private router: Router
   ) {
     this.router.events.subscribe((event: Event) => {
-      if (event instanceof NavigationStart) {
-        // Show loading indicator        
+      if (event instanceof NavigationStart) {        
         if (!event.url) return;
         if (event.url == '/clientes') {
           this.seleccionarMenu(this.menuSeleccionado);

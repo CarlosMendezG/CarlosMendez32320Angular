@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { ClientesService } from "./clientes.service";
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Subscription, Observable, of, from, interval } from 'rxjs';
+import { of } from 'rxjs';
 import { Cliente } from "../models/cliente";
 
 describe('Clientes Servicio', () => {

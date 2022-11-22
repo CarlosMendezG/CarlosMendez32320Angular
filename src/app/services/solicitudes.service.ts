@@ -64,9 +64,9 @@ export class SolicitudesService {
 
   private manejarError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
-      console.warn('Error del lado del cliente', error.error.message);
+      
     } else {
-      console.warn('Error del lado del servidor', error.error.message);
+      
     }
 
     return throwError(() => new Error('Error en la comunicación HTTP'));

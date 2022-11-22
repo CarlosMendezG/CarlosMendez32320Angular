@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
 import { EmployeeIdentityApi } from './employee-identity.service';
 
 export class EmployeeApi {

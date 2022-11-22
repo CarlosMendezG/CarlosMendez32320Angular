@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { selectSesiónActiva } from 'src/app/core/state/sesion.selectors';
 import { Cliente } from 'src/app/models/cliente';
-import { Sesion } from 'src/app/models/sesion';
-import { TipoUsuario } from 'src/app/models/usuario';
-import { ClientesService } from 'src/app/services/clientes.service';
-import { SesionService } from 'src/app/services/sesion.service';
+import { ClienteState } from 'src/app/models/cliente.state';
+import { Sesión } from 'src/app/models/sesión';
+import { TipoUsuario, Usuario } from 'src/app/models/usuario';
+import { clientesAgregar, clientesModificar } from '../../state/clientes.actions';
+import { obtenerCliente } from '../../state/clientes.selectors';
 
 @Component({
   selector: 'app-clientes',
@@ -14,33 +16,27 @@ import { SesionService } from 'src/app/services/sesion.service';
   styleUrls: ['./clientes.component.scss']
 })
 export class ClientesComponent implements OnInit, OnDestroy {
-  public esAdmin: boolean = false;
-  public sesionSubscription!: Subscription;
-  public sesion$: Observable<Sesion>;
-  public sesion: Sesion = { activa: false, usuario: undefined };
   public cliente: Cliente | undefined;
-  public clienteSubscribe!: Subscription;
+  public usuario!: Usuario;
   public nuevoCliente: boolean = false;
   public error: Error | undefined;
 
   public formularioReactivo: FormGroup;
 
   public editando: boolean = false;
+  public TipoUsuario = TipoUsuario;
 
   constructor(
     private formBuilder: FormBuilder,
-    private sesionServicio: SesionService,
-    private clientesService: ClientesService
+    private router: Router,
+    private storeClientes: Store<ClienteState>,
+    private storeSesión: Store<Sesión>
   ) {
     this.formularioReactivo = this.formBuilder.group({
       id: new FormControl('', [Validators.required]),
       nombre: new FormControl('', [Validators.required, Validators.minLength(5), Validators.pattern('[a-zA-Z ]*')]),
       rfc: new FormControl('', [Validators.required, Validators.minLength(13), Validators.pattern(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)])
     });
-
-    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
-      map((sesion: Sesion) => this.sesion = sesion)
-    );
   }
 
   private cargarCliente() {
@@ -53,7 +49,6 @@ export class ClientesComponent implements OnInit, OnDestroy {
   }
 
   submitForm(): void {
-    console.log(this.formularioReactivo.value);
     this.error = undefined;
     if (!this.formularioReactivo) return;
     if (!this.cliente) this.cliente = { id: 0, cliente: '', correo: '', rfc: '', regimenFiscal: '', cp: '', responsable: '', comentarios: '', idNEWeb: '' };
@@ -61,67 +56,18 @@ export class ClientesComponent implements OnInit, OnDestroy {
     this.cliente.rfc = this.formularioReactivo.get('rfc')?.value;
 
     if (this.cliente.id == 0) {
-      this.clienteSubscribe = this.clientesService.agregarClienteHttp(this.cliente).subscribe(
-        (resultado: Cliente) => {
-          this.cliente = resultado;
-          this.cargarCliente();
-        }, (err: Error) => {
-          console.error(err);
-          this.error = err;
-          setTimeout(() => {
-            this.error = undefined;
-          }, 15000);
-        }, () => {
-          this.clienteSubscribe.unsubscribe;
-        }
-      );
+      this.storeClientes.dispatch(clientesAgregar({ cliente: this.cliente }));
+      this.router.navigate(['clientes/cards']);
       return;
     }
 
-    if (!this.esAdmin) {
+    if (!this.usuario || (this.usuario.tipoUsuario != TipoUsuario.administrador && this.usuario.tipoUsuario != TipoUsuario.top)) {    
       alert('Procedimiento solo para administradores');
       return;
     }
 
-    this.clienteSubscribe = this.clientesService.modificarClienteHttp(this.cliente).subscribe(
-      (resultado: Cliente) => {
-        this.cliente = resultado;
-        this.cargarCliente();
-      }, (err: Error) => {
-        console.error(err);
-        this.error = err;
-        setTimeout(() => {
-          this.error = undefined;
-        }, 15000);
-      }, () => {
-        this.clienteSubscribe.unsubscribe;
-      }
-    );
-  }
-
-  getFechaT(fecha: string): Date {
-    let año: number = parseInt(fecha.substring(0, 4));
-    let mes: number = parseInt(fecha.substring(5, 7));
-    let dia: number = parseInt(fecha.substring(8, 10));
-    if (fecha.length < 12) return new Date(año, mes - 1, dia);
-
-    let hora: number = parseInt(fecha.substring(11, 13));
-    let minutos: number = parseInt(fecha.substring(14, 16));
-    let segundos: number = parseInt(fecha.substring(17, 18));
-    return new Date(año, mes - 1, dia, hora, minutos, segundos);
-  }
-
-  getFechaTu(fecha: string | undefined): Date | undefined {
-    if (!fecha) return undefined;
-    let año: number = parseInt(fecha.substring(0, 4));
-    let mes: number = parseInt(fecha.substring(5, 7));
-    let dia: number = parseInt(fecha.substring(8, 10));
-    if (fecha.length < 12) return new Date(año, mes - 1, dia);
-
-    let hora: number = parseInt(fecha.substring(11, 13));
-    let minutos: number = parseInt(fecha.substring(14, 16));
-    let segundos: number = parseInt(fecha.substring(17, 18));
-    return new Date(año, mes - 1, dia, hora, minutos, segundos);
+    this.storeClientes.dispatch(clientesModificar({ cliente: this.cliente }));
+    this.cargarCliente();
   }
 
   esValido(campo: string): boolean {
@@ -162,63 +108,27 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   cargarDatosOriginales() {
     this.formularioReactivo.reset();
-    this.clienteSubscribe = this.clientesService.obtenerClienteHttp(0).subscribe(
-      (resultado: Cliente) => {
-        this.cliente = resultado;
-        if (!this.cliente) this.cliente = { id: 0, cliente: '', correo: '', rfc: '', regimenFiscal: '', cp: '', responsable: '', comentarios: '', idNEWeb: '' };
-        this.cargarCliente();
-        this.editando = this.cliente.id == 0;
-      }, (err: Error) => {
-        console.error(err);
-        this.error = err;
-        setTimeout(() => {
-          this.error = undefined;
-        }, 15000);
-      }, () => {
-        this.clienteSubscribe.unsubscribe;
-      }
-    );
-  }
-
-  getDateT(fecha: Date | undefined): string | undefined {
-    if (!fecha) return undefined;
-    let fechaTxt: string = fecha.getFullYear().toString().padStart(4, "0") + "-" +
-      (1 + fecha.getMonth()).toString().padStart(2, "0") + "-" +
-      fecha.getDate().toString().padStart(2, "0") + "T" +
-      fecha.getHours().toString().padStart(2, "0") + ":" +
-      fecha.getMinutes().toString().padStart(2, "0") + ":" +
-      fecha.getSeconds().toString().padStart(2, "0");
-    return fechaTxt;
-  }
-
-  getDateText(fecha: Date | undefined): string | undefined {
-    if (!fecha) return undefined;
-    let fechaTxt: string = fecha.getFullYear().toString().padStart(4, "0") + "-" +
-      (1 + fecha.getMonth()).toString().padStart(2, "0") + "-" +
-      fecha.getDate().toString().padStart(2, "0");
-    return fechaTxt;
-  }
+    this.storeClientes.select(obtenerCliente).subscribe((cliente: Cliente) => {      
+      this.cliente = cliente;      
+      this.cargarCliente();
+      this.editando = this.cliente.id == 0;
+    });
+  }  
 
   ngOnInit(): void {
-    this.esAdmin = false;
-    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
-      (sesion: Sesion) => {
-        console.log('Sesión cargada');
-        this.sesion = sesion;
-        this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
-      }, (err: Error) => {
-        console.error(err);
-      }, () => {
-        this.sesionSubscription.unsubscribe;
+    this.storeSesión.select(selectSesiónActiva).subscribe((sesión: Sesión) => {
+      if (!sesión.activa || !sesión.usuario) {
+        this.router.navigate(['noAutorizado']);
+        return;
       }
-    );
+      this.usuario = sesión.usuario;
+    });
 
-    this.cargarDatosOriginales();
     this.nuevoCliente = false;
+    this.cargarDatosOriginales();    
   }
 
   ngOnDestroy(): void {
-    if (this.clienteSubscribe) this.clienteSubscribe.unsubscribe();
-    if (this.sesionSubscription) this.sesionSubscription.unsubscribe();
+    
   }
 }

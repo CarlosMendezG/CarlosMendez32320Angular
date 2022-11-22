@@ -1,12 +1,12 @@
-<div class="img-center" *ngIf="estadoCliente != Estados.datosCargados">
+<div class="img-center" *ngIf="cargando"> 
     <mat-spinner></mat-spinner>
 </div>
-<div class="row" *ngIf="estadoCliente == Estados.datosCargados">
+<div class="row" *ngIf="!cargando">
     <mat-form-field>
         <mat-label>Filtrar:</mat-label>
         <input matInput type="text" placeholder="Buscar..." (keyup)="aplicarFiltro($event)">
     </mat-form-field>
-    <div *ngFor="let cliente of clientes$ | async" class="col-md-4 p-2">
+    <div *ngFor="let cliente of clientes" class="col-md-4 p-2">        
         <mat-card>
             <mat-card-title>{{cliente.cliente}}</mat-card-title>
             <mat-card-subtitle>Correo: {{cliente.correo}}</mat-card-subtitle>
@@ -22,7 +22,7 @@
                 <button class="px-2" mat-flat-button color="primary"
                     (click)="detalleCliente(cliente.id)">Detalle</button>
                 <button class="px-2" mat-flat-button color="warn"
-                    (click)="eliminarClienteClick(cliente.id)">Eliminar</button>
+                    (click)="eliminarClienteClick(cliente.id, cliente.cliente)">Eliminar</button>
             </mat-card-actions>
         </mat-card>
     </div>

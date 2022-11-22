@@ -13,6 +13,8 @@ export class SolicitudComponent implements OnInit {
     Validators.maxLength(5),
   ]);
   public enEdicion: boolean = false;
+  public mostrarDatosRegistrados: boolean = false;
+  public mostrarDatosSolicitud: boolean = false;
 
   constructor() {}
 

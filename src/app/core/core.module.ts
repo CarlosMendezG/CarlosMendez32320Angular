@@ -11,8 +11,10 @@ import { MenuInicialComponent } from './components/menu-inicial/menu-inicial.com
 import { LoginComponent } from './components/login/login.component';
 import { RouterModule } from '@angular/router';
 import { SoloPersonalAutorizadoComponent } from './components/solo-personal-autorizado/solo-personal-autorizado.component';
-
-
+import { SesiónEffects } from './state/sesión.effects';
+import { sesiónFeatureKey, reducer } from './state/sesión.reducer';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { SoloPersonalAutorizadoComponent } from './components/solo-personal-auto
     CommonModule,
     RouterModule,
     MaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,    
+    StoreModule.forFeature(sesiónFeatureKey, reducer),
+    EffectsModule.forFeature([SesiónEffects])
   ],
   exports: [
     ToolbarComponent,

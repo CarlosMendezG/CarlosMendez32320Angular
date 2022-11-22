@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Event, RouterEvent, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { aceSoporte_version } from '../../ace_datos';
-import { Sesion } from 'src/app/models/sesion';
-import { SesionService } from 'src/app/services/sesion.service';
+import { Sesión } from 'src/app/models/sesión';
+import { SesiónService } from 'src/app/services/sesión.service';
 import { Observable, Subscription } from 'rxjs';
 import { $tipoUsuario } from 'src/app/models/usuario';
 
@@ -15,20 +14,19 @@ import { $tipoUsuario } from 'src/app/models/usuario';
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
   public sesionSubscription!: Subscription;
-  public sesion$: Observable<Sesion>;
-  public sesion: Sesion = { activa: false, usuario: undefined };
+  public sesion$: Observable<Sesión>;
+  public sesion: Sesión = { activa: false, usuario: undefined };
   public tiposUsuario = $tipoUsuario;
 
   public ruta: string = "inicio";
   public aceSoporte_version = aceSoporte_version;
 
   constructor(
-    private sesionService: SesionService,
-    private dialog: MatDialog,
+    private sesionService: SesiónService,    
     private readonly _router: Router
   ) {
-    this.sesion$ = this.sesionService.obtenerSesion().pipe(
-      map((sesion: Sesion) => this.sesion = sesion)
+    this.sesion$ = this.sesionService.obtenerSesión().pipe(
+      map((sesion: Sesión) => this.sesion = sesion)
     );
 
     _router.events.pipe(
@@ -44,11 +42,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   public cerrarSesion() {
-    let sesion: Sesion = {
+    let sesion: Sesión = {
       activa: false,
       usuario: undefined
     }
-    this.sesionService.ponerSesion(sesion);
+    this.sesionService.ponerSesión(sesion);
     if (this.ruta == "inicio") {
       this._router.navigate(['autenticacion/login']);
       return;
@@ -71,12 +69,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.obtenerRuta(this._router.url);
-    this.sesionSubscription = this.sesionService.obtenerSesion().subscribe(
-      (sesion: Sesion) => {
-        console.log('Sesión cargada');
+    this.sesionSubscription = this.sesionService.obtenerSesión().subscribe(
+      (sesion: Sesión) => {
         this.sesion = sesion;
       }, (err: Error) => {
-        console.error(err);
+        
       }, () => {
         this.sesionSubscription.unsubscribe;
       }

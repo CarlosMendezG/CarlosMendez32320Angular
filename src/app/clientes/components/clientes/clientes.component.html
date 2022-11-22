@@ -49,7 +49,7 @@
     </div>
     <div class="row mt-3">
         <div class="col-8" *ngIf="!editando">
-            <button class="btn btn-success" (click)="editando = true" *ngIf="esAdmin">Editar datos</button>
+            <button class="btn btn-success" (click)="editando = true" *ngIf="usuario && (usuario.tipoUsuario == TipoUsuario.administrador || usuario.tipoUsuario == TipoUsuario.top)">Editar datos</button>
             <button class="btn btn-success" id="btnAgregar" (click)="agregarEmpleado()">Agregar cliente</button>
         </div>
         <div class="col-8" *ngIf="editando">

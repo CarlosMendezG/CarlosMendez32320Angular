@@ -78,16 +78,12 @@ export class DistribuidoresInicioComponent implements OnInit {
     this.ownerId = parent.snapshot.params['owner'];
     this.companyId = parent.snapshot.params['company'];
 
-    // this._homeService.activeSection = 'employee';
-
     this._api.employee.Identity.list(this.ownerId, this.companyId, this.camposAdd).subscribe(
       (resultado: IEmpleadosListado[]) => {
         this.empleados = <IEmpleadosListado[]>resultado;
-        this.dataSource = new MatTableDataSource<IEmpleadosListado>(this.empleados);
-        console.log(this.empleados);
+        this.dataSource = new MatTableDataSource<IEmpleadosListado>(this.empleados);        
         this.terminoCarga = true;
       }, (err: Error) => {
-        console.error(err);
         this.terminoCarga = true;
       }, () => {
         this.terminoCarga = true;

@@ -4,10 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CVFechaT } from 'src/app/core/funciones/fFecha';
-import { Sesion } from 'src/app/models/sesion';
+import { Sesión } from 'src/app/models/sesión';
 import { SolicitudInfo } from 'src/app/models/solicitudInfo';
 import { TipoUsuario } from 'src/app/models/usuario';
-import { SesionService } from 'src/app/services/sesion.service';
+import { SesiónService } from 'src/app/services/sesión.service';
 import { SolicitudesService } from 'src/app/services/solicitudes.service';
 
 @Component({
@@ -18,8 +18,8 @@ import { SolicitudesService } from 'src/app/services/solicitudes.service';
 export class SolicitudEditarComponent implements OnInit, OnDestroy {
   public esAdmin: boolean = false;
   public sesionSubscription!: Subscription;
-  public sesion$: Observable<Sesion>;
-  public sesion: Sesion = { activa: false, usuario: undefined };
+  public sesion$: Observable<Sesión>;
+  public sesion: Sesión = { activa: false, usuario: undefined };
   public idSolicitud: number = 0;
   public solicitud: SolicitudInfo | undefined;
   public solicitudSubscribe!: Subscription;
@@ -33,7 +33,7 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private solicitudService: SolicitudesService,
-    private sesionServicio: SesionService,
+    private sesionServicio: SesiónService,
     private route: ActivatedRoute,
     private router: Router
   ) {
@@ -47,8 +47,8 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
       tipoMovimiento: new FormControl(''),
     });
 
-    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
-      map((sesion: Sesion) => this.sesion = sesion)
+    this.sesion$ = this.sesionServicio.obtenerSesión().pipe(
+      map((sesion: Sesión) => this.sesion = sesion)
     );
   }
 
@@ -66,7 +66,6 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
   }
 
   submitForm(): void {
-    console.log(this.formularioReactivo.value);
     this.error = undefined;
     if (!this.formularioReactivo) return;
     if (!this.solicitud)
@@ -89,8 +88,7 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
         (resultado: SolicitudInfo) => {
           this.solicitud = resultado;
           this.router.navigate(['solicitudes/solicitudes']);
-        }, (err: Error) => {
-          console.error(err);
+        }, (err: Error) => {          
           this.error = err;
           setTimeout(() => {
             this.error = undefined;
@@ -112,7 +110,6 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
         this.solicitud = resultado;
         this.router.navigate(['solicitudes/solicitudes']);
       }, (err: Error) => {
-        console.error(err);
         this.error = err;
         setTimeout(() => {
           this.error = undefined;
@@ -185,7 +182,6 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
         this.cargarSolicitud();
         this.editando = this.solicitud.id == 0;
       }, (err: Error) => {
-        console.error(err);
         this.error = err;
         setTimeout(() => {
           this.error = undefined;
@@ -198,13 +194,12 @@ export class SolicitudEditarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.esAdmin = false;
-    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
-      (sesion: Sesion) => {
-        console.log('Sesión cargada');
+    this.sesionSubscription = this.sesionServicio.obtenerSesión().subscribe(
+      (sesion: Sesión) => {
         this.sesion = sesion;
         this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
       }, (err: Error) => {
-        console.error(err);
+
       }, () => {
         this.sesionSubscription.unsubscribe;
       }

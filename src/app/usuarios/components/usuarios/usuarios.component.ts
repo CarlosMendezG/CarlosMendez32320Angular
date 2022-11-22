@@ -9,9 +9,9 @@ import { map } from 'rxjs/operators';
 import { DialogComponent } from 'src/app/core/components/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/core/components/error/error.component';
 import { CVFechaT } from 'src/app/core/funciones/fFecha';
-import { Sesion } from 'src/app/models/sesion';
+import { Sesión } from 'src/app/models/sesión';
 import { Usuario, TipoUsuario } from 'src/app/models/usuario';
-import { SesionService } from 'src/app/services/sesion.service';
+import { SesiónService } from 'src/app/services/sesión.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
 import { environment } from 'src/environments/environment';
 
@@ -23,8 +23,8 @@ import { environment } from 'src/environments/environment';
 export class UsuariosComponent implements OnInit, OnDestroy {
   public esAdmin: boolean = false;
   public sesionSubscription!: Subscription;
-  public sesion$: Observable<Sesion>;
-  public sesion: Sesion = { activa: false, usuario: undefined };
+  public sesion$: Observable<Sesión>;
+  public sesion: Sesión = { activa: false, usuario: undefined };
   public usuarios: Usuario[] = [];
 
   public usuarios$!: Observable<Usuario[]>;
@@ -58,12 +58,12 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
   constructor(
     private usuariosServicio: UsuariosService,
-    private sesionServicio: SesionService,
+    private sesionServicio: SesiónService,
     private dialog: MatDialog,
     private router: Router
   ) {
-    this.sesion$ = this.sesionServicio.obtenerSesion().pipe(
-      map((sesion: Sesion) => this.sesion = sesion)
+    this.sesion$ = this.sesionServicio.obtenerSesión().pipe(
+      map((sesion: Sesión) => this.sesion = sesion)
     );
   }
 
@@ -215,14 +215,12 @@ export class UsuariosComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`The dialog was closed ${result}`);
       if (nombreActual.cliente != result) return;
       this.cargado = true;
       this.usuariosSubscribe = this.usuariosServicio.eliminarUsuarioHttp(usuarioAEliminar).subscribe(
         (resultado: Usuario) => {
           this.cargarUsuarios();
         }, (err: Error) => {
-          console.error(err);
           this.error = err;
           setTimeout(() => {
             this.error = undefined;
@@ -236,13 +234,11 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.esAdmin = false;
-    this.sesionSubscription = this.sesionServicio.obtenerSesion().subscribe(
-      (sesion: Sesion) => {
-        console.log('Sesión cargada');
+    this.sesionSubscription = this.sesionServicio.obtenerSesión().subscribe(
+      (sesion: Sesión) => {
         this.sesion = sesion;
         this.esAdmin = this.sesion && this.sesion.activa && (this.sesion.usuario?.tipoUsuario == TipoUsuario.top || this.sesion.usuario?.tipoUsuario == TipoUsuario.administrador);
-      }, (err: Error) => {
-        console.error(err);
+      }, (err: Error) => {        
         this.router.navigate([`inicio`]);
       }, () => {
         this.sesionSubscription.unsubscribe;

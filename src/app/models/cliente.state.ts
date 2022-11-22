@@ -1,7 +1,7 @@
 import { Cliente } from "./cliente";
-import { Estados } from "./states";
 
 export interface ClienteState {
-    estado: Estados;
+    estado: boolean;
     clientes: Cliente[];
+    clienteSeleccionado: number;
 }
