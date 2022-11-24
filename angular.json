@@ -133,6 +133,7 @@
   "defaultProject": "ACESoporte",
   "cli": {
     "schematicCollections": [
+      "@ngrx/schematics",
       "@ngrx/schematics"
     ]
   }
