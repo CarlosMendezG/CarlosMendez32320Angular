@@ -29,7 +29,7 @@ export class ClienteEffects {
         () => { return this.actions$.pipe(
             ofType(ClientesAcciones.clientesAgregar),            
             concatMap(( { cliente} ) => this.clientesServicio.agregarClienteHttp(cliente).pipe(                        
-                    map((cliente: Cliente) => ClientesAcciones.clientesInicializar()),
+                    map(() => ClientesAcciones.clientesInicializar()),
                     catchError((error: any) => of(ClientesAcciones.clientesAgregarError({ error }))) 
                 )
             )
@@ -38,9 +38,9 @@ export class ClienteEffects {
 
     modificarClientes$ = createEffect(
         () => { return this.actions$.pipe(
-            ofType(ClientesAcciones.clientesEliminar),            
+            ofType(ClientesAcciones.clientesModificar),            
             concatMap(( { cliente} ) => this.clientesServicio.modificarClienteHttp(cliente).pipe(
-                    map((cliente: Cliente) => ClientesAcciones.clientesInicializar()),
+                    map(() => ClientesAcciones.clientesInicializar()),
                     catchError((error: any) => of(ClientesAcciones.clientesModificarError({ error }))) 
                 )
             )

@@ -51,12 +51,15 @@ export class ClientesComponent implements OnInit, OnDestroy {
   submitForm(): void {
     this.error = undefined;
     if (!this.formularioReactivo) return;
-    if (!this.cliente) this.cliente = { id: 0, cliente: '', correo: '', rfc: '', regimenFiscal: '', cp: '', responsable: '', comentarios: '', idNEWeb: '' };
-    this.cliente.cliente = this.formularioReactivo.get('nombre')?.value;
-    this.cliente.rfc = this.formularioReactivo.get('rfc')?.value;
+    if (!this.cliente) this.cliente = { id: 0, cliente: '', correo: '', rfc: '', regimenFiscal: '', cp: '', responsable: '', comentarios: '', idNEWeb: '' };  
+    let nombreCliente = this.formularioReactivo.get('nombre')?.value;
+    let rfcCliente = this.formularioReactivo.get('rfc')?.value;
 
-    if (this.cliente.id == 0) {
-      this.storeClientes.dispatch(clientesAgregar({ cliente: this.cliente }));
+    let cliente: Cliente = { id: this.cliente.id, cliente: nombreCliente, correo: this.cliente.correo, rfc: rfcCliente, regimenFiscal: this.cliente.regimenFiscal,
+      cp: this.cliente.cp, responsable: this.cliente.responsable, comentarios: this.cliente.comentarios, idNEWeb: this.cliente.idNEWeb };    
+
+    if (cliente.id == 0) {
+      this.storeClientes.dispatch(clientesAgregar({ cliente: cliente }));
       this.router.navigate(['clientes/cards']);
       return;
     }
@@ -66,8 +69,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.storeClientes.dispatch(clientesModificar({ cliente: this.cliente }));
-    this.cargarCliente();
+    this.storeClientes.dispatch(clientesModificar({ cliente: cliente }));    
   }
 
   esValido(campo: string): boolean {
@@ -108,7 +110,11 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   cargarDatosOriginales() {
     this.formularioReactivo.reset();
-    this.storeClientes.select(obtenerCliente).subscribe((cliente: Cliente) => {      
+    this.storeClientes.select(obtenerCliente).subscribe((cliente: Cliente) => {
+      if (!cliente) {
+        this.editando = false;
+        return;
+      }
       this.cliente = cliente;      
       this.cargarCliente();
       this.editando = this.cliente.id == 0;

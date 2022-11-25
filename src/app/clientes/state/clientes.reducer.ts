@@ -14,7 +14,7 @@ export const reducer = createReducer(
     estadoInicial,
     on(ClientesActions.clientesInicializar, (state) => {
         return { ...state, estado: false, clientes: [] }
-    }),    
+    }),
     on(ClientesActions.clientesCargar, (state, { clientes }) => {
         return { ...state, estado: true, clientes }
     }),
